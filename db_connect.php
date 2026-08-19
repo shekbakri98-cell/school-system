@@ -11,5 +11,5 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Kuusaa odeeffannoo waliin walitti hidhuun hin danda'amne: " . $conn->connect_error);
 }
-echo "Kuusaa odeeffannoo (Database) waliin milkiidhaan walitti hidhameera!";
+//echo "Kuusaa odeeffannoo (Database) waliin milkiidhaan walitti hidhameera!";
 ?>

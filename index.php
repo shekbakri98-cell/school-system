@@ -1,23 +1,52 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// 1. Database Connection waliin walitti hidhuu
 $conn = new mysqli("mysql-anewar.alwaysdata.net", "anewar_admin", "015661Emran@", "anewar_school_db");
-if ($conn->connect_error) { die("Kuusaa odeeffannoo waliin walitti hidhuun hin danda'amne: " . $conn->connect_error); }
-
-$msg = ""; $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
-$t_st = $conn->query("SELECT COUNT(*) as t FROM students")->fetch_assoc()['t'] ?? 0;
-$t_tc = $conn->query("SELECT COUNT(*) as t FROM teachers")->fetch_assoc()['t'] ?? 0;
-
-if (isset($_POST['submit_student'])) {
-    $d = $conn->real_escape_string($_POST['daree']); $k = $conn->real_escape_string($_POST['kutaa']);
-    $r = $conn->real_escape_string($_POST['roll_no']); $m = $conn->real_escape_string($_POST['maqaa_guutuu']);
-    $s = $conn->real_escape_string($_POST['saala']); $a = $conn->real_escape_string($_POST['amantii']);
-    $ba = $conn->real_escape_string($_POST['bilbila_abbaa']); $bh = $conn->real_escape_string($_POST['bilbila_haadha']);
-    if ($conn->query("INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala, amantii, bilbila_abbaa, bilbila_haadha) VALUES ('$d', '$k', '$r', '$m', '$s', '$a', '$ba', '$bh')")) { header("Location: ?page=student_list"); exit(); }
+if ($conn->connect_error) { 
+    die("Kuusaa odeeffannoo waliin walitti hidhuun hin danda'amne: " . $conn->connect_error); 
 }
+
+$msg = ""; $msg_type = "";
+$page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
+
+// Baay'ina Barattootaa fi Barsiisotaa herreguuf
+$t_st = 0; $t_tc = 0;
+$st_q = $conn->query("SELECT COUNT(*) as t FROM students");
+if ($st_q) { $t_st = $st_q->fetch_assoc()['t']; }
+$tc_q = $conn->query("SELECT COUNT(*) as t FROM teachers");
+if ($tc_q) { $t_tc = $tc_q->fetch_assoc()['t']; }
+
+// 2. Data Insertion Logic
+if (isset($_POST['submit_student'])) {
+    $d = $conn->real_escape_string($_POST['daree']); 
+    $k = $conn->real_escape_string($_POST['kutaa']);
+    $r = $conn->real_escape_string($_POST['roll_no']); 
+    $m = $conn->real_escape_string($_POST['maqaa_guutuu']);
+    $s = $conn->real_escape_string($_POST['saala']); 
+    $a = $conn->real_escape_string($_POST['amantii']);
+    $ba = $conn->real_escape_string($_POST['bilbila_abbaa']); 
+    $bh = $conn->real_escape_string($_POST['bilbila_haadha']);
+    
+    if ($conn->query("INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala, amantii, bilbila_abbaa, bilbila_haadha) VALUES ('$d', '$k', '$r', '$m', '$s', '$a', '$ba', '$bh')")) { 
+        header("Location: ?page=student_list"); 
+        exit(); 
+    }
+}
+
 if (isset($_POST['submit_teacher'])) {
-    $m = $conn->real_escape_string($_POST['maqaa_barsiisaa']); $s = $conn->real_escape_string($_POST['saala']);
-    $g = $conn->real_escape_string($_POST['gosa_barnootaa']); $b = $conn->real_escape_string($_POST['bilbila']);
-    $i = $conn->real_escape_string($_POST['id_nambarii']); $t = $conn->real_escape_string($_POST['teessoo']);
-    if ($conn->query("INSERT INTO teachers (maqaa_barsiisaa, saala, gosa_barnootaa, bilbila, id_nambarii, teessoo) VALUES ('$m', '$s', '$g', '$b', '$i', '$t')")) { header("Location: ?page=teacher_list"); exit(); }
+    $m = $conn->real_escape_string($_POST['maqaa_barsiisaa']); 
+    $s = $conn->real_escape_string($_POST['saala']);
+    $g = $conn->real_escape_string($_POST['gosa_barnootaa']); 
+    $b = $conn->real_escape_string($_POST['bilbila']);
+    $i = $conn->real_escape_string($_POST['id_nambarii']); 
+    $t = $conn->real_escape_string($_POST['teessoo']);
+    
+    if ($conn->query("INSERT INTO teachers (maqaa_barsiisaa, saala, gosa_barnootaa, bilbila, id_nambarii, teessoo) VALUES ('$m', '$s', '$g', '$b', '$i', '$t')")) { 
+        header("Location: ?page=teacher_list"); 
+        exit(); 
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -107,53 +136,3 @@ if (isset($_POST['submit_teacher'])) {
                     <button type="submit" name="submit_student" class="btn-submit">Galmeessi</button><div style="clear:both;"></div>
                 </form>
             <?php elseif ($page == 'student_list'): ?>
-                <h3>Tarree Barattootaa</h3>
-                <div class="table-responsive"><table class="data-table">
-                    <thead><tr><th>ID</th><th>Maqaa Guutuu</th><th>Roll No</th><th>Daree</th><th>Kutaa</th><th>Saala</th><th>Amantii</th><th>Bilbila Abbaa</th></tr></thead>
-                    <tbody>
-                        <?php
-                        $res = $conn->query("SELECT * FROM students ORDER BY id DESC");
-                        if ($res && $res->num_rows > 0) { while($row = $res->fetch_assoc()) { echo "<tr><td>".$row['id']."</td><td style='color:#1d8ecd;font-weight:bold;'>".$row['maqaa_guutuu']."</td><td>".$row['roll_no']."</td><td>".$row['daree']."</td><td>".$row['kutaa']."</td><td>".$row['saala']."</td><td>".$row['amantii']."</td><td>".$row['bilbila_abbaa']."</td></tr>"; } }
-                        else { echo "<tr><td colspan='8' style='text-align:center;color:#999;'>Barataan hin jiru.</td></tr>"; }
-                        ?>
-                    </tbody>
-                </table></div>
-            <?php elseif ($page == 'teacher_form'): ?>
-                <h3>Unka Galmeessa Barsiisotaa</h3>
-                <form action="?page=teacher_form" method="POST">
-                    <div class="form-section-title">Odeeffannoo Barsiisichaa</div>
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Maqaa Guutuu:</label><input type="text" name="maqaa_barsiisaa" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">ID Nambarii:</label><input type="text" name="id_nambarii" class="form-control" required></div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Gosa Barnootaa:</label><input type="text" name="gosa_barnootaa" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Bilbila:</label><input type="tel" name="bilbila" class="form-control" required></div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Saala:</label><div class="radio-group"><label><input type="radio" name="saala" value="Dhiira" checked> Dhiira</label><label><input type="radio" name="saala" value="Dubara"> Dubara</label></div></div>
-                        <div class="form-group"><label class="form-label">Teessoo:</label><input type="text" name="teessoo" class="form-control"></div>
-                    </div>
-                    <button type="submit" name="submit_teacher" class="btn-submit">Barsiisaa Galmeessi</button><div style="clear:both;"></div>
-                </form>
-            <?php elseif ($page == 'teacher_list'): ?>
-                <h3>Tarree Barsiisotaa</h3>
-                <div class="table-responsive"><table class="data-table">
-                    <thead><tr><th>ID</th><th>Maqaa Guutuu</th><th>ID Code</th><th>Gosa Barnootaa</th><th>Bilbila</th><th>Saala</th><th>Teessoo</th></tr></thead>
-                    <tbody>
-                        <?php
-                        $res = $conn->query("SELECT * FROM teachers ORDER BY id DESC");
-                        if ($res && $res->num_rows > 0) { while($row = $res->fetch_assoc()) { echo "<tr><td>".$row['id']."</td><td style='color:#fd7e14;font-weight:bold;'>".$row['maqaa_barsiisaa']."</td><td>".$row['id_nambarii']."</td><td>".$row['gosa_barnootaa']."</td><td>".$row['bilbila']."</td><td>".$row['saala']."</td><td>".$row['teessoo']."</td></tr>"; } }
-                        else { echo "<tr><td colspan='7' style='text-align:center;color:#999;'>Barsiisaan hin jiru.</td></tr>"; }
-                        ?>
-                    </tbody>
-                </table></div>
-            <?php else: ?>
-                <h3>Fuula <?php echo ucfirst($page); ?></h3><p style="color:#666; font-size:14px;">Fuulli kun qorannoo irra jira.</p>
-            <?php endif; ?>
-            <p style="font-size:11px; color:#777; margin-top:40px; text-align:center;">ICTVision School System ©2017 - 2026</p>
-        </div>
-    </div>
-</body>
-</html>
-<?php $conn->close(); ?>

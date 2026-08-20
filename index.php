@@ -40,33 +40,34 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 // Baay'ina barattootaa fi barsiisotaa lakkaa'uuf
 $t_st = $conn->query("SELECT COUNT(*) as t FROM students")->fetch_assoc()['t'] ?? 0;
 $t_tc = $conn->query("SELECT COUNT(*) as t FROM teachers")->fetch_assoc()['t'] ?? 0;
-
-// USER REGISTER LOGIC
-if (isset($_POST['submit_register_user']) && isset($_SESSION['gosa_user']) && $_SESSION['gosa_user'] == 'admin') {
-    $u_name = $conn->real_escape_string($_POST['reg_username']);
-    $u_type = $conn->real_escape_string($_POST['reg_gosa_user']);
-    $u_pass = password_hash($_POST['reg_password'], PASSWORD_BCRYPT);
-    
-    if ($conn->query("INSERT INTO users (username, password, gosa_user) VALUES ('$u_name', '$u_pass', '$u_type')")) {
-        $success_msg = "User haaraan milkiin dabalameera!";
-    } else { $msg = "Dogoggora: Username kun duraan jira!"; }
-}
-
-// INSERTS MANAGEMENT
+?>
+<?php
 if (isset($_SESSION['user_id'])) {
+    // USER REGISTER LOGIC
+    if (isset($_POST['submit_register_user']) && $_SESSION['gosa_user'] == 'admin') {
+        $u_name = $conn->real_escape_string($_POST['reg_username']);
+        $u_type = $conn->real_escape_string($_POST['reg_gosa_user']);
+        $u_pass = password_hash($_POST['reg_password'], PASSWORD_BCRYPT);
+        if ($conn->query("INSERT INTO users (username, password, gosa_user) VALUES ('$u_name', '$u_pass', '$u_type')")) {
+            $success_msg = "User haaraan milkiin dabalameera!";
+        } else { $msg = "Dogoggora: Username kun duraan jira!"; }
+    }
+    // DARE DADDABALU
     if (isset($_POST['submit_class'])) {
         $maqaa = $conn->real_escape_string($_POST['maqaa_daree']);
         if ($conn->query("INSERT INTO classes (maqaa_daree) VALUES ('$maqaa')")) { $success_msg = "Daree dabalameera!"; }
     }
+    // SECTION DADDABALU
     if (isset($_POST['submit_section'])) {
         $d_id = (int)$_POST['daree_id']; $m_kutaa = $conn->real_escape_string($_POST['maqaa_kutaa']);
         if ($conn->query("INSERT INTO sections (daree_id, maqaa_kutaa) VALUES ($d_id, '$m_kutaa')")) { $success_msg = "Kutaa dabalameera!"; }
     }
+    // SUBJECT DADDABALU
     if (isset($_POST['submit_subject'])) {
         $d_id = (int)$_POST['daree_id']; $sub_name = $conn->real_escape_string($_POST['maqaa_subject']);
-        $t_id = !empty($_POST['barsiisaa_id']) ? (int)$_POST['barsiisaa_id'] : "NULL";
-        if ($conn->query("INSERT INTO subjects (daree_id, maqaa_gosa_barnootaa, barsiisaa_id) VALUES ($d_id, '$sub_name', $t_id)")) { $success_msg = "Subject dabalameera!"; }
+        if ($conn->query("INSERT INTO subjects (daree_id, maqaa_gosa_barnootaa) VALUES ($d_id, '$sub_name')")) { $success_msg = "Subject dabalameera!"; }
     }
+    // ATTENDANCE GALMEESSU
     if (isset($_POST['submit_attendance'])) {
         $guyyaa = $conn->real_escape_string($_POST['guyyaa']);
         if (!empty($_POST['status'])) {
@@ -77,10 +78,12 @@ if (isset($_SESSION['user_id'])) {
             $success_msg = "Hirmaannaan galmeeffameera!";
         }
     }
+    // EXAM DADDABALU
     if (isset($_POST['submit_exam'])) {
         $m_qorannoo = $conn->real_escape_string($_POST['maqaa_qorannoo']); $semisteera = $conn->real_escape_string($_POST['semisteera']); $bara = $conn->real_escape_string($_POST['bara_barnootaa']);
         if ($conn->query("INSERT INTO exams (maqaa_qorannoo, semisteera, bara_barnootaa) VALUES ('$m_qorannoo', '$semisteera', '$bara')")) { $success_msg = "Qorannoon dabalameera!"; }
     }
+    // QABXII GALMEESSU
     if (isset($_POST['submit_marks'])) {
         $q_id = (int)$_POST['qorannoo_id']; $s_id = (int)$_POST['subject_id'];
         if (!empty($_POST['qabxii'])) {
@@ -91,22 +94,22 @@ if (isset($_SESSION['user_id'])) {
             $success_msg = "Qabxiin barattootaa kuusameera!";
         }
     }
+    // BARATAA GALMEESSU
     if (isset($_POST['submit_student'])) {
-        $d = $conn->real_escape_string($_POST['daree']); $k = $conn->real_escape_string($_POST['kutaa']); $r = $conn->real_escape_string($_POST['roll_no']); $m = $conn->real_escape_string($_POST['maqaa_guutuu']); $s = $conn->real_escape_string($_POST['saala']); $a = $conn->real_escape_string($_POST['amantii']); $ba = $conn->real_escape_string($_POST['bilbila_abbaa']); $bh = $conn->real_escape_string($_POST['bilbila_haadha']);
-        if ($conn->query("INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala, amantii, bilbila_abbaa, bilbila_haadha) VALUES ('$d', '$k', '$r', '$m', '$s', '$a', '$ba', '$bh')")) { header("Location: ?page=student_list"); exit(); }
+        $d = $conn->real_escape_string($_POST['daree']); $k = $conn->real_escape_string($_POST['kutaa']); $r = $conn->real_escape_string($_POST['roll_no']); $m = $conn->real_escape_string($_POST['maqaa_guutuu']); $s = $conn->real_escape_string($_POST['saala']);
+        if ($conn->query("INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala) VALUES ('$d', '$k', '$r', '$m', '$s')")) { header("Location: ?page=student_list"); exit(); }
     }
+    // BARSIISAA GALMEESSU
     if (isset($_POST['submit_teacher'])) {
-        $m = $conn->real_escape_string($_POST['maqaa_barsiisaa']); $s = $conn->real_escape_string($_POST['saala']); $g = $conn->real_escape_string($_POST['gosa_barnootaa']); $b = $conn->real_escape_string($_POST['bilbila']); $i = $conn->real_escape_string($_POST['id_nambarii']); $t = $conn->real_escape_string($_POST['teessoo']);
-        if ($conn->query("INSERT INTO teachers (maqaa_barsiisaa, saala, gosa_barnootaa, bilbila, id_nambarii, teessoo) VALUES ('$m', '$s', '$g', '$b', '$i', '$t')")) { header("Location: ?page=teacher_list"); exit(); }
+        $m = $conn->real_escape_string($_POST['maqaa_barsiisaa']); $g = $conn->real_escape_string($_POST['gosa_barnootaa']); $i = $conn->real_escape_string($_POST['id_nambarii']);
+        if ($conn->query("INSERT INTO teachers (maqaa_barsiisaa, gosa_barnootaa, id_nambarii) VALUES ('$m', '$g', '$i')")) { header("Location: ?page=teacher_list"); exit(); }
     }
 }
 ?>
 <!DOCTYPE html>
 <html lang="om">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICTVision School System</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ICTVision School System</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #f4f6f9; font-family: sans-serif; color: #333; }
@@ -146,21 +149,15 @@ if (isset($_SESSION['user_id'])) {
         <h2>Seensa ICTVision System</h2>
         <?php if(!empty($msg)): ?><div class="alert-error"><?php echo $msg; ?></div><?php endif; ?>
         <form action="index.php" method="POST">
-            <div class="form-group">
-                <label class="form-label">Maqaa Seensaa (Username):</label>
-                <input type="text" name="username" class="form-control" required placeholder="admin">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Jecha Iccitii (Password):</label>
-                <input type="password" name="password" class="form-control" required placeholder="******">
-            </div>
+            <div class="form-group"><label class="form-label">Username:</label><input type="text" name="username" class="form-control" required placeholder="admin"></div>
+            <div class="form-group"><label class="form-label">Password:</label><input type="password" name="password" class="form-control" required placeholder="******"></div>
             <button type="submit" name="submit_login" class="btn-submit" style="width:100%; float:none;">Seeni</button>
         </form>
     </div>
 <?php else: ?>
     <div class="navbar-custom">
         <div style="font-size:18px; font-weight:bold;">ICTVision School System</div>
-        <div><strong><?php echo htmlspecialchars($_SESSION['username']); ?> (<?php echo ucfirst($_SESSION['gosa_user']); ?>)</strong> | <a href="?action=logout" style="color:yellow;">Bahi (Logout)</a></div>
+        <div><strong><?php echo htmlspecialchars($_SESSION['username']); ?> (<?php echo ucfirst($_SESSION['gosa_user']); ?>)</strong> | <a href="?action=logout" style="color:yellow;">Bahi</a></div>
     </div>
     <div class="main-container">
         <div class="sidebar">
@@ -170,7 +167,6 @@ if (isset($_SESSION['user_id'])) {
                 <a class="<?php echo ($page == 'section')?'active':''; ?>" href="?page=section">Section</a>
                 <a class="<?php echo ($page == 'subject')?'active':''; ?>" href="?page=subject">Subject</a>
             <?php endif; ?>
-            
             <?php if ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'): ?>
                 <a class="<?php echo ($page == 'student_form')?'active':''; ?>" href="?page=student_form">Student Form</a>
                 <a class="<?php echo ($page == 'student_list')?'active':''; ?>" href="?page=student_list">Student List</a>
@@ -198,40 +194,24 @@ if (isset($_SESSION['user_id'])) {
                     <div class="card card-students"><h4>Baay'ina Barattootaa</h4><p><?php echo $t_st; ?></p></div>
                     <div class="card card-teachers"><h4>Baay'ina Barsiisotaa</h4><p><?php echo $t_tc; ?></p></div>
                 </div>
-
             <?php elseif ($page == 'class' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Hoggansa Dareewwanii (Class)</h3>
                 <form action="?page=class" method="POST" style="margin-bottom:30px;">
-                    <div class="form-grid"><div class="form-group"><label class="form-label">Maqaa Daree:</label><input type="text" name="maqaa_daree" class="form-control" required placeholder="Class - 1"></div></div>
+                    <input type="text" name="maqaa_daree" class="form-control" required placeholder="Class - 1"><br>
                     <button type="submit" name="submit_class" class="btn-submit">Daree Dabali</button>
                 </form>
-                <h4>Tarree Dareewwanii</h4>
-                <table class="data-table">
-                    <thead><tr><th>ID</th><th>Maqaa Daree</th></tr></thead>
-                    <tbody>
-                        <?php $res = $conn->query("SELECT * FROM classes"); while($row = $res->fetch_assoc()): ?>
-                            <tr><td><?php echo $row['id']; ?></td><td><?php echo htmlspecialchars($row['maqaa_daree']); ?></td></tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-
             <?php elseif ($page == 'section' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Hoggansa Kutaalee (Section)</h3>
                 <form action="?page=section" method="POST">
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Daree Filadhu:</label><select name="daree_id" class="form-select"><?php $cl = $conn->query("SELECT * FROM classes"); while($c = $cl->fetch_assoc()): ?><option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['maqaa_daree']); ?></option><?php endwhile; ?></select></div>
-                        <div class="form-group"><label class="form-label">Maqaa Kutaa:</label><input type="text" name="maqaa_kutaa" class="form-control" required placeholder="Blue"></div>
-                    </div>
+                    <select name="daree_id" class="form-select"><?php $cl = $conn->query("SELECT * FROM classes"); while($c = $cl->fetch_assoc()): ?><option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['maqaa_daree']); ?></option><?php endwhile; ?></select><br>
+                    <input type="text" name="maqaa_kutaa" class="form-control" required placeholder="Blue"><br>
                     <button type="submit" name="submit_section" class="btn-submit">Kutaa Dabali</button>
                 </form>
-
             <?php elseif ($page == 'subject' && $_SESSION['gosa_user'] == 'admin'): ?>
-                <h3>Hoggansa Gosoota Barnootaa (Subject)</h3>
+                <h3>Hoggansa Gosoota Barnootaa</h3>
                 <form action="?page=subject" method="POST">
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Daree Filadhu:</label><select name="daree_id" class="form-select"><?php $cl = $conn->query("SELECT * FROM classes"); while($c = $cl->fetch_assoc()): ?><option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['maqaa_daree']); ?></option><?php endwhile; ?></select></div>
-                        <div class="form-group"><label class="form-label">Maqaa Subject:</label><input type="text" name="maqaa_subject" class="form-control" required placeholder="Mathematics"></div>
-                    </div>
+                    <select name="daree_id" class="form-select"><?php $cl = $conn->query("SELECT * FROM classes"); while($c = $cl->fetch_assoc()): ?><option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['maqaa_daree']); ?></option><?php endwhile; ?></select><br>
+                    <input type="text" name="maqaa_subject" class="form-control" required placeholder="Afaan Oromoo"><br>
                     <button type="submit" name="submit_subject" class="btn-submit">Subject Dabali</button>
                 </form>
             <?php elseif ($page == 'student_form' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
@@ -243,33 +223,27 @@ if (isset($_SESSION['user_id'])) {
                         <div class="form-group"><label class="form-label">Roll No:</label><input type="text" name="roll_no" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Maqaa Guutuu:</label><input type="text" name="maqaa_guutuu" class="form-control" required></div>
                         <div class="form-group"><label class="form-label">Saala:</label><select name="saala" class="form-select"><option value="Korma">Korma</option><option value="Dhalaa">Dhalaa</option></select></div>
-                        <div class="form-group"><label class="form-label">Bilbila Abbaa:</label><input type="text" name="bilbila_abbaa" class="form-control"></div>
                     </div>
                     <button type="submit" name="submit_student" class="btn-submit">Galmeessi</button>
                 </form>
-
             <?php elseif ($page == 'student_list'): ?>
                 <h3>Tarree Barattootaa</h3>
                 <table class="data-table">
-                    <thead><tr><th>Roll No</th><th>Maqaa Guutuu</th><th>Daree</th><th>Kutaa</th><th>Saala</th></tr></thead>
+                    <thead><tr><th>Roll No</th><th>Maqaa Guutuu</th><th>Daree</th><th>Kutaa</th></tr></thead>
                     <tbody>
                         <?php $res = $conn->query("SELECT * FROM students"); while($row = $res->fetch_assoc()): ?>
-                            <tr><td><?php echo $row['roll_no']; ?></td><td><?php echo $row['maqaa_guutuu']; ?></td><td><?php echo $row['daree']; ?></td><td><?php echo $row['kutaa']; ?></td><td><?php echo $row['saala']; ?></td></tr>
+                            <tr><td><?php echo $row['roll_no']; ?></td><td><?php echo $row['maqaa_guutuu']; ?></td><td><?php echo $row['daree']; ?></td><td><?php echo $row['kutaa']; ?></td></tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
-
             <?php elseif ($page == 'teacher_form' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Unka Galmeessa Barsiisaa</h3>
                 <form action="?page=teacher_form" method="POST">
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Maqaa Barsiisaa:</label><input type="text" name="maqaa_barsiisaa" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">Gosa Barnootaa:</label><input type="text" name="gosa_barnootaa" class="form-control" required></div>
-                        <div class="form-group"><label class="form-label">ID Nambarii:</label><input type="text" name="id_nambarii" class="form-control" required></div>
-                    </div>
+                    <input type="text" name="maqaa_barsiisaa" class="form-control" required placeholder="Maqaa"><br>
+                    <input type="text" name="gosa_barnootaa" class="form-control" required placeholder="Subject"><br>
+                    <input type="text" name="id_nambarii" class="form-control" required placeholder="ID"><br>
                     <button type="submit" name="submit_teacher" class="btn-submit">Galmeessi</button>
                 </form>
-
             <?php elseif ($page == 'teacher_list'): ?>
                 <h3>Tarree Barsiisotaa</h3>
                 <table class="data-table">
@@ -280,67 +254,47 @@ if (isset($_SESSION['user_id'])) {
                         <?php endwhile; ?>
                     </tbody>
                 </table>
-            <?php elseif ($page == 'attendance' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
-                <h3>Hordoffii Hirmaannaa Barattootaa</h3>
+            <?php elseif ($page == 'attendance' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+                <h3>Hordoffii Hirmaannaa</h3>
                 <form action="?page=attendance" method="POST">
-                    <div class="form-group" style="width:250px; margin-bottom:20px;"><label class="form-label">Guyyaa Filadhu:</label><input type="date" name="guyyaa" class="form-control" value="<?php echo date('Y-m-d'); ?>" required></div>
+                    <input type="date" name="guyyaa" class="form-control" value="<?php echo date('Y-m-d'); ?>" required><br>
                     <table class="data-table">
-                        <thead><tr><th>Roll No</th><th>Maqaa Guutuu</th><th>Haala Hirmaannaa</th></tr></thead>
-                        <tbody>
-                            <?php $st = $conn->query("SELECT * FROM students"); while($row = $st->fetch_assoc()): ?>
-                                <tr><td><?php echo $row['roll_no']; ?></td><td><?php echo $row['maqaa_guutuu']; ?></td><td><select name="status[<?php echo $row['id']; ?>]" class="form-select"><option value="Argame">Argame</option><option value="Hafe">Hafe</option></select></td></tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                    <button type="submit" name="submit_attendance" class="btn-submit">Hirmaannaa Galmeessi</button>
-                </form>
-
-            <?php elseif ($page == 'exams' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
-                <h3>Hoggansa Qorannoof Semisteeraa</h3>
-                <form action="?page=exams" method="POST"><div class="form-grid"><div class="form-group"><label class="form-label">Maqaa Qorannoo:</label><input type="text" name="maqaa_qorannoo" class="form-control" required placeholder="Mid Exam"></div><div class="form-group"><label class="form-label">Semisteera:</label><input type="text" name="semisteera" class="form-control" value="Semester 1"></div><div class="form-group"><label class="form-label">Bara Barnootaa:</label><input type="text" name="bara_barnootaa" class="form-control" value="2018 E.C."></div></div><button type="submit" name="submit_exam" class="btn-submit">Qorannoo Dabali</button></form>
-
-            <?php elseif ($page == 'mark_manage' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
-                <h3>Galmeessa Qabxii Barattootaa</h3>
-                <form action="?page=mark_manage" method="POST">
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Qorannoo:</label><select name="qorannoo_id" class="form-select"><?php $ex = $conn->query("SELECT * FROM exams"); while($e = $ex->fetch_assoc()): ?><option value="<?php echo $e['id']; ?>"><?php echo htmlspecialchars($e['maqaa_qorannoo']); ?></option><?php endwhile; ?></select></div>
-                        <div class="form-group"><label class="form-label">Subject:</label><select name="subject_id" class="form-select"><?php $sub = $conn->query("SELECT * FROM subjects"); while($s = $sub->fetch_assoc()): ?><option value="<?php echo $s['id']; ?>"><?php echo htmlspecialchars($s['maqaa_gosa_barnootaa']); ?></option><?php endwhile; ?></select></div>
-                    </div>
-                    <table class="data-table">
-                        <thead><tr><th>Maqaa Guutuu</th><th>Qabxii (100%)</th></tr></thead>
-                        <tbody>
-                            <?php $st = $conn->query("SELECT * FROM students"); while($row = $st->fetch_assoc()): ?>
-                                <tr><td><?php echo $row['maqaa_guutuu']; ?></td><td><input type="number" step="0.01" name="qabxii[<?php echo $row['id']; ?>]" class="form-control" style="width:120px;" placeholder="0-100"></td></tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                    <button type="submit" name="submit_marks" class="btn-submit">Qabxii Kuusi</button>
-                </form>
-
-            <?php elseif ($page == 'result'): ?>
-                <h3>Bu'aa fi Sadarkaa Barattootaa (Result)</h3>
-                <table class="data-table">
-                    <thead><tr><th>Roll No</th><th>Maqaa Guutuu</th><th>Qabxii Ida'amaa</th></tr></thead>
-                    <tbody>
-                        <?php $res = $conn->query("SELECT s.roll_no, s.maqaa_guutuu, SUM(m.qabxii) as total_mark FROM students s LEFT JOIN marks m ON s.id = m.barataa_id GROUP BY s.id ORDER BY total_mark DESC"); while($row = $res->fetch_assoc()): ?>
-                            <tr><td><?php echo $row['roll_no']; ?></td><td><?php echo htmlspecialchars($row['maqaa_guutuu']); ?></td><td><?php echo $row['total_mark'] ?? '0'; ?></td></tr>
+                        <?php $st = $conn->query("SELECT * FROM students"); while($row = $st->fetch_assoc()): ?>
+                            <tr><td><?php echo $row['maqaa_guutuu']; ?></td><td><select name="status[<?php echo $row['id']; ?>]" class="form-select"><option value="Argame">Argame</option><option value="Hafe">Hafe</option></select></td></tr>
                         <?php endwhile; ?>
-                    </tbody>
+                    </table><br><button type="submit" name="submit_attendance" class="btn-submit">Galmeessi</button>
+                </form>
+            <?php elseif ($page == 'exams' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+                <h3>Hoggansa Qorannoof Semisteeraa</h3>
+                <form action="?page=exams" method="POST"><input type="text" name="maqaa_qorannoo" class="form-control" required placeholder="Mid Exam"><br><input type="text" name="semisteera" class="form-control" value="Semester 1"><br><input type="text" name="bara_barnootaa" class="form-control" value="2018 E.C."><br><button type="submit" name="submit_exam" class="btn-submit">Qorannoo Dabali</button></form>
+            <?php elseif ($page == 'mark_manage' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+                <h3>Galmeessa Qabxii</h3>
+                <form action="?page=mark_manage" method="POST">
+                    <select name="qorannoo_id" class="form-select"><?php $ex = $conn->query("SELECT * FROM exams"); while($e = $ex->fetch_assoc()): ?><option value="<?php echo $e['id']; ?>"><?php echo htmlspecialchars($e['maqaa_qorannoo']); ?></option><?php endwhile; ?></select><br>
+                    <select name="subject_id" class="form-select"><?php $sub = $conn->query("SELECT * FROM subjects"); while($s = $sub->fetch_assoc()): ?><option value="<?php echo $s['id']; ?>"><?php echo htmlspecialchars($s['maqaa_gosa_barnootaa']); ?></option><?php endwhile; ?></select><br>
+                    <table class="data-table">
+                        <?php $st = $conn->query("SELECT * FROM students"); while($row = $st->fetch_assoc()): ?>
+                            <tr><td><?php echo $row['maqaa_guutuu']; ?></td><td><input type="number" step="0.01" name="qabxii[<?php echo $row['id']; ?>]" class="form-control"></td></tr>
+                        <?php endwhile; ?>
+                    </table><br><button type="submit" name="submit_marks" class="btn-submit">Qabxii Kuusi</button>
+                </form>
+            <?php elseif ($page == 'result'): ?>
+                <h3>Bu'aa fi Sadarkaa Barattootaa</h3>
+                <table class="data-table">
+                    <?php $res = $conn->query("SELECT s.roll_no, s.maqaa_guutuu, SUM(m.qabxii) as total_mark FROM students s LEFT JOIN marks m ON s.id = m.barataa_id GROUP BY s.id ORDER BY total_mark DESC"); while($row = $res->fetch_assoc()): ?>
+                        <tr><td><?php echo $row['roll_no']; ?></td><td><?php echo htmlspecialchars($row['maqaa_guutuu']); ?></td><td><?php echo $row['total_mark'] ?? '0'; ?></td></tr>
+                    <?php endwhile; ?>
                 </table>
-
             <?php elseif ($page == 'promotion' && $_SESSION['gosa_user'] == 'admin'): ?>
-                <h3>Kutaa Dabarsuu</h3><button class="btn-submit" style="float:left;">Barattoota Hunda Kutaa Dabarsi</button>
+                <h3>Kutaa Dabarsuu</h3><button class="btn-submit">Barattoota Hunda Kutaa Dabarsi</button>
             <?php elseif ($page == 'voice_sms' && $_SESSION['gosa_user'] == 'admin'): ?>
-                <h3>Ergaa SMS Ergi</h3><textarea class="form-control" rows="4" placeholder="Ergaa asitti barreessi..."></textarea><button class="btn-submit" style="float:left; margin-top:10px;">Ergi</button>
-
+                <h3>Ergaa SMS Ergi</h3><textarea class="form-control" rows="4" placeholder="Ergaa..."></textarea><br><button class="btn-submit">Ergi</button>
             <?php elseif ($page == 'settings' && $_SESSION['gosa_user'] == 'admin'): ?>
-                <h3>Uumama Hojjetaa Seensaa (Create System User)</h3>
+                <h3>Uumama Hojjetaa Seensaa</h3>
                 <form action="?page=settings" method="POST">
-                    <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Username:</label><input type="text" name="reg_username" class="form-control" required placeholder="barsiisaa_tolasaa"></div>
-                        <div class="form-group"><label class="form-label">Password:</label><input type="password" name="reg_password" class="form-control" required placeholder="******"></div>
-                        <div class="form-group"><label class="form-label">Gosa User (Role):</label><select name="reg_gosa_user" class="form-select"><option value="barsiisaa">Barsiisaa</option><option value="admin">Admin</option><option value="barataa">Barataa</option></select></div>
-                    </div>
+                    <input type="text" name="reg_username" class="form-control" required placeholder="Username"><br>
+                    <input type="password" name="reg_password" class="form-control" required placeholder="******"><br>
+                    <select name="reg_gosa_user" class="form-select"><option value="barsiisaa">Barsiisaa</option><option value="admin">Admin</option></select><br>
                     <button type="submit" name="submit_register_user" class="btn-submit">User Uumi</button>
                 </form>
             <?php endif; ?>

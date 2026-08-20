@@ -1,6 +1,6 @@
 <?php
 session_start();
-// Koodii kana yeroo tokko qofa Refresh gochuuf toora session_start() jalatti kaa'i:
+// Koodii kanaan dura dabalte sana haqiirraatii kan qofa kaa'i:
 $test_user = "admin";
 $test_pass = password_hash("admin123", PASSWORD_BCRYPT);
 $conn->query("INSERT INTO users (username, password, gosa_user) VALUES ('$test_user', '$test_pass', 'admin') ON DUPLICATE KEY UPDATE password='$test_pass'");

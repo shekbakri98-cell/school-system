@@ -136,25 +136,24 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
     <!-- Caasaa Gidduu / Main Section -->
     <div class="main-container">
         
-        <!-- Tarree Harka Bitaa / Sidebar Navigation -->
-        <div class="sidebar">
-            <div class="menu-header">MAIN</div>
-            <a class="nav-link" href="#">Dashboard</a>
-            <a class="nav-link" href="#">Class</a>
-            <a class="nav-link" href="#">Section</a>
-            <a class="nav-link" href="#">Subject</a>
-            <a class="nav-link active" href="#">Student Form</a>
-            <a class="nav-link" href="#">Student List</a>
-            <a class="nav-link" href="#">Teacher</a>
-            <a class="nav-link" href="#">Attendance</a>
-            <a class="nav-link" href="#">Exams</a>
-            <a class="nav-link" href="#">Mark Manage</a>
-            <a class="nav-link" href="#">Result</a>
-            <a class="nav-link" href="#">Promotion</a>
-            <a class="nav-link" href="#">Voice / SMS</a>
-            <a class="nav-link" href="#">Settings</a>
-        </div>
-
+       <!-- Koodii naannoo sarara 113-128 jiru kanaan bakka buusi -->
+<div class="sidebar">
+    <div class="menu-header">MAIN</div>
+    <a class="nav-link" href="?page=dashboard">Dashboard</a>
+    <a class="nav-link" href="?page=class">Class</a>
+    <a class="nav-link" href="?page=section">Section</a>
+    <a class="nav-link" href="?page=subject">Subject</a>
+    <a class="nav-link <?php echo ($page == 'student_form') ? 'active' : ''; ?>" href="?page=student_form">Student Form</a>
+    <a class="nav-link <?php echo ($page == 'student_list') ? 'active' : ''; ?>" href="?page=student_list">Student List</a>
+    <a class="nav-link <?php echo ($page == 'teacher_form') ? 'active' : ''; ?>" href="?page=teacher_form">Teacher Form</a>
+    <a class="nav-link" href="?page=attendance">Attendance</a>
+    <a class="nav-link" href="?page=exams">Exams</a>
+    <a class="nav-link" href="?page=mark_manage">Mark Manage</a>
+    <a class="nav-link" href="?page=result">Result</a>
+    <a class="nav-link" href="?page=promotion">Promotion</a>
+    <a class="nav-link" href="?page=voice_sms">Voice / SMS</a>
+    <a class="nav-link" href="?page=settings">Settings</a>
+</div>
         <!-- Unka Galmeessaa / Form Section -->
         <div class="content-body">
             <h3>Unka Galmeessa Barataa</h3>

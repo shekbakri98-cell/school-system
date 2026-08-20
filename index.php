@@ -1,21 +1,8 @@
 <?php
-// 1. Walitti hidhamiinsa uumuu
-$servername = "mysql-anewar.alwaysdata.net"; 
-$username = "anewar_admin"; 
-$password = "015661Emran@";      
-$dbname = "anewar_school_db"; 
+// Faayila database fi style asitti waamna
+include('db.php');
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Kuusaa odeeffannoo waliin walitti hidhuun hin danda'amne: " . $conn->connect_error);
-}
-
-// Ergaawwan agarsiisaniif
-$msg = "";
-$msg_type = "";
-
-// 2. Barataa Galmeessuu
+// Barataa Galmeessuu
 if (isset($_POST['submit_student'])) {
     $daree = $conn->real_escape_string($_POST['daree']);
     $kutaa = $conn->real_escape_string($_POST['kutaa']);
@@ -26,19 +13,12 @@ if (isset($_POST['submit_student'])) {
     $bilbila_abbaa = $conn->real_escape_string($_POST['bilbila_abbaa']);
     $bilbila_haadha = $conn->real_escape_string($_POST['bilbila_haadha']);
 
-    $sql = "INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala, amantii, bilbila_abbaa, bilbila_haadha) 
-            VALUES ('$daree', '$kutaa', '$roll_no', '$maqaa_guutuu', '$saala', '$amantii', '$bilbila_abbaa', '$bilbila_haadha')";
-    
-    if ($conn->query($sql) === TRUE) {
-        $msg = "Milkaa'ina! Barataan haala sirriin galmeeffameera.";
-        $msg_type = "success";
-    } else {
-        $msg = "Dogoggorri uumame: " . $conn->error;
-        $msg_type = "danger";
-    }
+    $sql = "INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala, amantii, bilbila_abbaa, bilbila_haadha) VALUES ('$daree', '$kutaa', '$roll_no', '$maqaa_guutuu', '$saala', '$amantii', '$bilbila_abbaa', '$bilbila_haadha')";
+    if ($conn->query($sql) === TRUE) { $msg = "Milkaa'ina! Barataan haala sirriin galmeeffameera."; $msg_type = "success"; }
+    else { $msg = "Dogoggorri uumame: " . $conn->error; $msg_type = "danger"; }
 }
 
-// 3. Barsiisaa Galmeessuu
+// Barsiisaa Galmeessuu
 if (isset($_POST['submit_teacher'])) {
     $maqaa_barsiisaa = $conn->real_escape_string($_POST['maqaa_barsiisaa']);
     $saala = $conn->real_escape_string($_POST['saala']);
@@ -47,20 +27,10 @@ if (isset($_POST['submit_teacher'])) {
     $id_nambarii = $conn->real_escape_string($_POST['id_nambarii']);
     $teessoo = $conn->real_escape_string($_POST['teessoo']);
 
-    $sql = "INSERT INTO teachers (maqaa_barsiisaa, saala, gosa_barnootaa, bilbila, id_nambarii, teessoo) 
-            VALUES ('$maqaa_barsiisaa', '$saala', '$gosa_barnootaa', '$bilbila', '$id_nambarii', '$teessoo')";
-    
-    if ($conn->query($sql) === TRUE) {
-        $msg = "Milkaa'ina! Barsiisaan haala sirriin galmeeffameera.";
-        $msg_type = "success";
-    } else {
-        $msg = "Dogoggorri uumame: " . $conn->error;
-        $msg_type = "danger";
-    }
+    $sql = "INSERT INTO teachers (maqaa_barsiisaa, saala, gosa_barnootaa, bilbila, id_nambarii, teessoo) VALUES ('$maqaa_barsiisaa', '$saala', '$gosa_barnootaa', '$bilbila', '$id_nambarii', '$teessoo')";
+    if ($conn->query($sql) === TRUE) { $msg = "Milkaa'ina! Barsiisaan haala sirriin galmeeffameera."; $msg_type = "success"; }
+    else { $msg = "Dogoggorri uumame: " . $conn->error; $msg_type = "danger"; }
 }
-
-// Fuula kamiin akka banamu to'achuuf
-$page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
 ?>
 <!DOCTYPE html>
 <html lang="om">
@@ -68,58 +38,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>ICTVision School System</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; }
-        .navbar-custom { background-color: #1d8ecd; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .navbar-custom .brand { font-size: 20px; font-weight: bold; }
-        .navbar-custom .user-info { font-size: 14px; }
-        .navbar-custom a { color: white; text-decoration: none; margin-left: 5px; font-weight: bold; }
-        .navbar-custom a:hover { text-decoration: underline; }
-        .main-container { display: flex; max-width: 100%; margin: 20px; gap: 20px; }
-        .sidebar { width: 250px; background-color: white; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 15px; flex-shrink: 0; }
-        .sidebar .menu-header { font-size: 11px; font-weight: bold; color: #a0a0a0; text-transform: uppercase; margin-bottom: 15px; padding-left: 10px; }
-        .sidebar .nav-link { color: #555; padding: 12px 15px; border-radius: 4px; margin-bottom: 5px; font-size: 14px; font-weight: 500; display: block; text-decoration: none; transition: all 0.2s ease; }
-        .sidebar .nav-link:hover { background-color: #f0f7fc; color: #1d8ecd; }
-        .sidebar .nav-link.active { background-color: #1d8ecd; color: white; font-weight: bold; }
-        .content-body { flex-grow: 1; background-color: white; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 30px; }
-        .content-body h3 { font-size: 22px; font-weight: bold; margin-bottom: 25px; border-bottom: 2px solid #f4f6f9; padding-bottom: 10px; }
-        .form-section-title { color: #1d8ecd; font-size: 16px; font-weight: 600; border-bottom: 1px solid #eef2f5; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .form-section-title:first-of-type { margin-top: 0; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-label { font-weight: 500; color: #444; font-size: 14px; margin-bottom: 8px; }
-        .form-control, .form-select { width: 100%; padding: 10px; border: 1px solid #cccccc; border-radius: 4px; font-size: 14px; background-color: #fff; }
-        .form-control:focus, .form-select:focus { border-color: #1d8ecd; outline: none; box-shadow: 0 0 5px rgba(29, 142, 205, 0.3); }
-        .radio-group { display: flex; gap: 20px; align-items: center; margin-top: 10px; }
-        .radio-item { display: flex; align-items: center; gap: 5px; font-size: 14px; }
-        .btn-submit { background-color: #1d8ecd; color: white; border: none; padding: 12px 30px; border-radius: 4px; font-size: 15px; font-weight: bold; cursor: pointer; display: inline-block; float: right; margin-top: 20px; transition: background 0.2s; }
-        .btn-submit:hover { background-color: #157cb5; }
-        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; font-weight: bold; }
-        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; }
-        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        .data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid #eef2f5; }
-        .data-table th { background-color: #f8f9fa; color: #555; font-weight: bold; }
-        .data-table tr:hover { background-color: #f1f8fc; }
-        .no-data { text-align: center; color: #999; padding: 20px; }
-        .clear { clear: both; }
-        .footer-text { font-size: 12px; color: #777; margin-top: 40px; text-align: center; }
-        @media (max-width: 768px) {
-            .main-container { flex-direction: column; }
-            .sidebar { width: 100%; }
-            .form-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    <?php include('style.php'); ?>
 </head>
 <body>
-    <div class="navbar-custom">
-        <div class="brand">ICTVision School System</div>
-        <div class="user-info">
-            <strong>anewar_admin</strong> | <a href="#">Bahi (Logout)</a>
-        </div>
-    </div>
+    <div class="navbar-custom"><div class="brand">ICTVision School System</div><div class="user-info"><strong>anewar_admin</strong> | <a href="#">Bahi</a></div></div>
     <div class="main-container">
         <div class="sidebar">
             <div class="menu-header">MAIN</div>
@@ -130,55 +52,79 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
             <a class="nav-link <?php echo ($page == 'student_form') ? 'active' : ''; ?>" href="?page=student_form">Student Form</a>
             <a class="nav-link <?php echo ($page == 'student_list') ? 'active' : ''; ?>" href="?page=student_list">Student List</a>
             <a class="nav-link <?php echo ($page == 'teacher_form') ? 'active' : ''; ?>" href="?page=teacher_form">Teacher Form</a>
-            <a class="nav-link" href="?page=attendance">Attendance</a>
-            <a class="nav-link" href="?page=exams">Exams</a>
-            <a class="nav-link" href="?page=mark_manage">Mark Manage</a>
-            <a class="nav-link" href="?page=result">Result</a>
-            <a class="nav-link" href="?page=promotion">Promotion</a>
-            <a class="nav-link" href="?page=voice_sms">Voice / SMS</a>
-            <a class="nav-link" href="?page=settings">Settings</a>
+            <a class="nav-link" href="?page=attendance">Attendance</a><a class="nav-link" href="?page=exams">Exams</a><a class="nav-link" href="?page=mark_manage">Mark Manage</a><a class="nav-link" href="?page=result">Result</a><a class="nav-link" href="?page=promotion">Promotion</a><a class="nav-link" href="?page=voice_sms">Voice / SMS</a><a class="nav-link" href="?page=settings">Settings</a>
         </div>
         <div class="content-body">
-            <?php if (!empty($msg)): ?>
-                <div class="alert alert-<?php echo $msg_type; ?>"><?php echo $msg; ?></div>
-            <?php endif; ?>
-
+            <?php if (!empty($msg)): ?><div class="alert alert-<?php echo $msg_type; ?>"><?php echo $msg; ?></div><?php endif; ?>
+            
             <?php if ($page == 'student_form'): ?>
                 <h3>Unka Galmeessa Barataa</h3>
                 <form action="?page=student_form" method="POST">
                     <div class="form-section-title">Odeeffannoo Daree</div>
                     <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Daree:</label>
-                            <select name="daree" class="form-select" required>
-                                <option value="Class - 1">Class - 1</option>
-                                <option value="Class - 2">Class - 2</option>
-                                <option value="Class - 3">Class - 3</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Kutaa:</label>
-                            <select name="kutaa" class="form-select" required>
-                                <option value="Blue (25)">Blue (25)</option>
-                                <option value="Red (20)">Red (20)</option>
-                                <option value="Green (30)">Green (30)</option>
-                            </select>
-                        </div>
+                        <div class="form-group"><label class="form-label">Daree:</label><select name="daree" class="form-select" required><option value="Class - 1">Class - 1</option><option value="Class - 2">Class - 2</option><option value="Class - 3">Class - 3</option></select></div>
+                        <div class="form-group"><label class="form-label">Kutaa:</label><select name="kutaa" class="form-select" required><option value="Blue (25)">Blue (25)</option><option value="Red (20)">Red (20)</option><option value="Green (30)">Green (30)</option></select></div>
                     </div>
                     <div class="form-section-title">Odeeffannoo Barataa</div>
-                  Roll No:
-                  Maqaa Guutuu:
-                  Saala:
-                  DhiiraDubara
-                  Amantii:
-                  TeessooBilbila Abbaa:
-                  Bilbila Haadha:
-                  GalmeessiTarree Barattootaa (Student List)Barattoota kuusaa data keessatti galmeeffaman hunda:
-                  Unka Galmeessa Barsiisotaa (Teacher Form)Odeeffannoo BarsiisichaaMaqaa Guutuu Barsiisaa:
-                  ID Nambarii (Code):
-                  Gosa Barnootaa (Subject):
-                  Lakk. Bilbilaa:
-                  Saala:
-                  DhiiraDubaraTeessoo (Address):
-                  Barsiisaa GalmeessiFuula Fuulli kun yeroo ammaa qorannoo irra jira.
-                  ICTVision School System ©2017 - 2026
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Roll No:</label><input type="text" name="roll_no" class="form-control" required/></div>
+                        <div class="form-group"><label class="form-label">Maqaa Guutuu:</label><input type="text" name="maqaa_guutuu" class="form-control" required/></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Saala:</label><div class="radio-group"><div class="radio-item"><input type="radio" name="saala" value="Dhiira" checked/> Dhiira</div><div class="radio-item"><input type="radio" name="saala" value="Dubara"/> Dubara</div></div></div>
+                        <div class="form-group"><label class="form-label">Amantii:</label><input type="text" name="amantii" class="form-control"/></div>
+                    </div>
+                    <div class="form-section-title">Teessoo</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Bilbila Abbaa:</label><input type="tel" name="bilbila_abbaa" class="form-control" required/></div>
+                        <div class="form-group"><label class="form-label">Bilbila Haadha:</label><input type="tel" name="bilbila_haadha" class="form-control"/></div>
+                    </div>
+                    <button type="submit" name="submit_student" class="btn-submit">Galmeessi</button><div class="clear"></div>
+                </form>
+
+            <?php elseif ($page == 'student_list'): ?>
+                <h3>Tarree Barattootaa</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead><tr><th>ID</th><th>Maqaa Guutuu</th><th>Roll No</th><th>Daree</th><th>Kutaa</th><th>Saala</th><th>Amantii</th><th>Bilbila Abbaa</th></tr></thead>
+                        <tbody>
+                            <?php
+                            $result = $conn->query("SELECT * FROM students ORDER BY id DESC");
+                            if ($result && $result->num_rows > 0) {
+                                while($row = $result->fetch_assoc()) {
+                                    echo "<tr><td>".$row['id']."</td><td style='color:#1d8ecd;font-weight:600;'>".$row['maqaa_guutuu']."</td><td>".$row['roll_no']."</td><td>".$row['daree']."</td><td>".$row['kutaa']."</td><td>".$row['saala']."</td><td>".$row['amantii']."</td><td>".$row['bilbila_abbaa']."</td></tr>";
+                                }
+                            } else { echo "<tr><td colspan='8' class='no-data'>Barataan hin jiru.</td></tr>"; }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+
+            <?php elseif ($page == 'teacher_form'): ?>
+                <h3>Unka Galmeessa Barsiisotaa</h3>
+                <form action="?page=teacher_form" method="POST">
+                    <div class="form-section-title">Odeeffannoo Barsiisichaa</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Maqaa Guutuu:</label><input type="text" name="maqaa_barsiisaa" class="form-control" required/></div>
+                        <div class="form-group"><label class="form-label">ID Nambarii:</label><input type="text" name="id_nambarii" class="form-control" required/></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Gosa Barnootaa:</label><input type="text" name="gosa_barnootaa" class="form-control" required/></div>
+                        <div class="form-group"><label class="form-label">Bilbila:</label><input type="tel" name="bilbila" class="form-control" required/></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Saala:</label><div class="radio-group"><div class="radio-item"><input type="radio" name="saala" value="Dhiira" checked/> Dhiira</div><div class="radio-item"><input type="radio" name="saala" value="Dubara"/> Dubara</div></div></div>
+                        <div class="form-group"><label class="form-label">Teessoo:</label><input type="text" name="teessoo" class="form-control"/></div>
+                    </div>
+                    <button type="submit" name="submit_teacher" class="btn-submit">Barsiisaa Galmeessi</button><div class="clear"></div>
+                </form>
+
+            <?php else: ?>
+                <h3>Fuula <?php echo ucfirst($page); ?></h3><p style="color:#666; font-size:14px;">Fuulli kun qorannoo irra jira.</p>
+            <?php endif; ?>
+            <p class="footer-text">ICTVision School System ©2017 - 2026</p>
+        </div>
+    </div>
+</body>
+</html>
+<?php $conn->close(); ?>

@@ -35,14 +35,13 @@ if (isset($_POST['submit_login'])) {
     } else { $msg = "Maqaan seensaa (Username) kun hin jiru!"; }
 }
 
-// Yoo eeyyamame qofa fuula biroo dabalachuu
 $page = isset($_GET['page']) ? $_GET['page'] : 'dashboard';
 
-// Baay'ina barattootaa fi barsiisotaa lakkaa'uuf (Yoo galmeessi jiraate qofa)
+// Baay'ina barattootaa fi barsiisotaa lakkaa'uuf
 $t_st = $conn->query("SELECT COUNT(*) as t FROM students")->fetch_assoc()['t'] ?? 0;
 $t_tc = $conn->query("SELECT COUNT(*) as t FROM teachers")->fetch_assoc()['t'] ?? 0;
 
-// USER REGISTER LOGIC (SETTINGS KEESSATTI KAN TA'U)
+// USER REGISTER LOGIC
 if (isset($_POST['submit_register_user']) && isset($_SESSION['gosa_user']) && $_SESSION['gosa_user'] == 'admin') {
     $u_name = $conn->real_escape_string($_POST['reg_username']);
     $u_type = $conn->real_escape_string($_POST['reg_gosa_user']);
@@ -53,13 +52,13 @@ if (isset($_POST['submit_register_user']) && isset($_SESSION['gosa_user']) && $_
     } else { $msg = "Dogoggora: Username kun duraan jira!"; }
 }
 
-// INSERTS MANAGEMENT (CLASS, SECTION, SUBJECT, ATTENDANCE, EXAMS, MARKS)
+// INSERTS MANAGEMENT
 if (isset($_SESSION['user_id'])) {
     if (isset($_POST['submit_class'])) {
         $maqaa = $conn->real_escape_string($_POST['maqaa_daree']);
         if ($conn->query("INSERT INTO classes (maqaa_daree) VALUES ('$maqaa')")) { $success_msg = "Daree dabalameera!"; }
     }
-    if (issetPOST['submit_section'])) {
+    if (isset($_POST['submit_section'])) {
         $d_id = (int)$_POST['daree_id']; $m_kutaa = $conn->real_escape_string($_POST['maqaa_kutaa']);
         if ($conn->query("INSERT INTO sections (daree_id, maqaa_kutaa) VALUES ($d_id, '$m_kutaa')")) { $success_msg = "Kutaa dabalameera!"; }
     }
@@ -143,14 +142,13 @@ if (isset($_SESSION['user_id'])) {
 <body>
 
 <?php if (!isset($_SESSION['user_id'])): ?>
-    <!-- UNKA SEENSA LOGIN SCREEN -->
     <div class="login-box">
         <h2>Seensa ICTVision System</h2>
         <?php if(!empty($msg)): ?><div class="alert-error"><?php echo $msg; ?></div><?php endif; ?>
         <form action="index.php" method="POST">
             <div class="form-group">
                 <label class="form-label">Maqaa Seensaa (Username):</label>
-                <input type="text" name="username" class="form-control" required placeholder="Fakkeenya: admin">
+                <input type="text" name="username" class="form-control" required placeholder="admin">
             </div>
             <div class="form-group">
                 <label class="form-label">Jecha Iccitii (Password):</label>
@@ -160,14 +158,11 @@ if (isset($_SESSION['user_id'])) {
         </form>
     </div>
 <?php else: ?>
-    <!-- ERGA SEENAN BOODA (AUTHENTICATED INTERFACE) -->
     <div class="navbar-custom">
         <div style="font-size:18px; font-weight:bold;">ICTVision School System</div>
         <div><strong><?php echo htmlspecialchars($_SESSION['username']); ?> (<?php echo ucfirst($_SESSION['gosa_user']); ?>)</strong> | <a href="?action=logout" style="color:yellow;">Bahi (Logout)</a></div>
     </div>
     <div class="main-container">
-        
-        <!-- SIDEBAR MENU ACCORDING TO ROLE -->
         <div class="sidebar">
             <a class="<?php echo ($page == 'dashboard')?'active':''; ?>" href="?page=dashboard">Dashboard</a>
             <?php if ($_SESSION['gosa_user'] == 'admin'): ?>
@@ -185,9 +180,7 @@ if (isset($_SESSION['user_id'])) {
                 <a class="<?php echo ($page == 'exams')?'active':''; ?>" href="?page=exams">Exams</a>
                 <a class="<?php echo ($page == 'mark_manage')?'active':''; ?>" href="?page=mark_manage">Mark Manage</a>
             <?php endif; ?>
-            
             <a class="<?php echo ($page == 'result')?'active':''; ?>" href="?page=result">Result</a>
-            
             <?php if ($_SESSION['gosa_user'] == 'admin'): ?>
                 <a class="<?php echo ($page == 'promotion')?'active':''; ?>" href="?page=promotion">Promotion</a>
                 <a class="<?php echo ($page == 'voice_sms')?'active':''; ?>" href="?page=voice_sms">Voice / SMS</a>
@@ -199,7 +192,6 @@ if (isset($_SESSION['user_id'])) {
             <?php if(!empty($msg)): ?><div class="alert-error"><?php echo $msg; ?></div><?php endif; ?>
             <?php if(!empty($success_msg)): ?><div class="alert-success"><?php echo $success_msg; ?></div><?php endif; ?>
 
-            <!-- 1. DASHBOARD -->
             <?php if ($page == 'dashboard'): ?>
                 <h3>Fuula Dashboard</h3>
                 <div class="dashboard-grid">
@@ -207,7 +199,6 @@ if (isset($_SESSION['user_id'])) {
                     <div class="card card-teachers"><h4>Baay'ina Barsiisotaa</h4><p><?php echo $t_tc; ?></p></div>
                 </div>
 
-            <!-- 2. CLASS -->
             <?php elseif ($page == 'class' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Hoggansa Dareewwanii (Class)</h3>
                 <form action="?page=class" method="POST" style="margin-bottom:30px;">
@@ -224,7 +215,6 @@ if (isset($_SESSION['user_id'])) {
                     </tbody>
                 </table>
 
-            <!-- 3. SECTION -->
             <?php elseif ($page == 'section' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Hoggansa Kutaalee (Section)</h3>
                 <form action="?page=section" method="POST">
@@ -235,7 +225,6 @@ if (isset($_SESSION['user_id'])) {
                     <button type="submit" name="submit_section" class="btn-submit">Kutaa Dabali</button>
                 </form>
 
-            <!-- 4. SUBJECT -->
             <?php elseif ($page == 'subject' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Hoggansa Gosoota Barnootaa (Subject)</h3>
                 <form action="?page=subject" method="POST">
@@ -245,8 +234,7 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                     <button type="submit" name="submit_subject" class="btn-submit">Subject Dabali</button>
                 </form>
-            <!-- 5. STUDENT FORM -->
-            <?php elseif ($page == 'student_form' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+            <?php elseif ($page == 'student_form' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
                 <h3>Unka Galmeessa Barataa</h3>
                 <form action="?page=student_form" method="POST">
                     <div class="form-grid">
@@ -260,7 +248,6 @@ if (isset($_SESSION['user_id'])) {
                     <button type="submit" name="submit_student" class="btn-submit">Galmeessi</button>
                 </form>
 
-            <!-- 6. STUDENT LIST -->
             <?php elseif ($page == 'student_list'): ?>
                 <h3>Tarree Barattootaa</h3>
                 <table class="data-table">
@@ -272,7 +259,6 @@ if (isset($_SESSION['user_id'])) {
                     </tbody>
                 </table>
 
-            <!-- 7. TEACHER FORM -->
             <?php elseif ($page == 'teacher_form' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Unka Galmeessa Barsiisaa</h3>
                 <form action="?page=teacher_form" method="POST">
@@ -294,8 +280,7 @@ if (isset($_SESSION['user_id'])) {
                         <?php endwhile; ?>
                     </tbody>
                 </table>
-            <!-- 8. ATTENDANCE -->
-            <?php elseif ($page == 'attendance' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+            <?php elseif ($page == 'attendance' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
                 <h3>Hordoffii Hirmaannaa Barattootaa</h3>
                 <form action="?page=attendance" method="POST">
                     <div class="form-group" style="width:250px; margin-bottom:20px;"><label class="form-label">Guyyaa Filadhu:</label><input type="date" name="guyyaa" class="form-control" value="<?php echo date('Y-m-d'); ?>" required></div>
@@ -310,12 +295,11 @@ if (isset($_SESSION['user_id'])) {
                     <button type="submit" name="submit_attendance" class="btn-submit">Hirmaannaa Galmeessi</button>
                 </form>
 
-            <!-- 9. EXAMS & 10. MARK MANAGE -->
-            <?php elseif ($page == 'exams' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+            <?php elseif ($page == 'exams' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
                 <h3>Hoggansa Qorannoof Semisteeraa</h3>
                 <form action="?page=exams" method="POST"><div class="form-grid"><div class="form-group"><label class="form-label">Maqaa Qorannoo:</label><input type="text" name="maqaa_qorannoo" class="form-control" required placeholder="Mid Exam"></div><div class="form-group"><label class="form-label">Semisteera:</label><input type="text" name="semisteera" class="form-control" value="Semester 1"></div><div class="form-group"><label class="form-label">Bara Barnootaa:</label><input type="text" name="bara_barnootaa" class="form-control" value="2018 E.C."></div></div><button type="submit" name="submit_exam" class="btn-submit">Qorannoo Dabali</button></form>
 
-            <?php elseif ($page == 'mark_manage' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa'])): ?>
+            <?php elseif ($page == 'mark_manage' && ($_SESSION['gosa_user'] == 'admin' || $_SESSION['gosa_user'] == 'barsiisaa')): ?>
                 <h3>Galmeessa Qabxii Barattootaa</h3>
                 <form action="?page=mark_manage" method="POST">
                     <div class="form-grid">
@@ -333,7 +317,6 @@ if (isset($_SESSION['user_id'])) {
                     <button type="submit" name="submit_marks" class="btn-submit">Qabxii Kuusi</button>
                 </form>
 
-            <!-- 11. RESULT -->
             <?php elseif ($page == 'result'): ?>
                 <h3>Bu'aa fi Sadarkaa Barattootaa (Result)</h3>
                 <table class="data-table">
@@ -345,19 +328,16 @@ if (isset($_SESSION['user_id'])) {
                     </tbody>
                 </table>
 
-            <!-- 12. PROMOTION & 13. VOICE_SMS -->
             <?php elseif ($page == 'promotion' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Kutaa Dabarsuu</h3><button class="btn-submit" style="float:left;">Barattoota Hunda Kutaa Dabarsi</button>
             <?php elseif ($page == 'voice_sms' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Ergaa SMS Ergi</h3><textarea class="form-control" rows="4" placeholder="Ergaa asitti barreessi..."></textarea><button class="btn-submit" style="float:left; margin-top:10px;">Ergi</button>
 
-            <!-- 14. SETTINGS - USER CREATION (HAARAA - SECURITY ACC) -->
             <?php elseif ($page == 'settings' && $_SESSION['gosa_user'] == 'admin'): ?>
                 <h3>Uumama Hojjetaa Seensaa (Create System User)</h3>
-                <p style="color:#666; margin-bottom:15px;">Kuni barsiisotaaf ykn admin biroof herrega seensaa ittiin uumudha.</p>
                 <form action="?page=settings" method="POST">
                     <div class="form-grid">
-                        <div class="form-group"><label class="form-label">Username:</label><input type="text" name="reg_username" class="form-control" required placeholder="Fakkeenya: barsiisaa_tolasaa"></div>
+                        <div class="form-group"><label class="form-label">Username:</label><input type="text" name="reg_username" class="form-control" required placeholder="barsiisaa_tolasaa"></div>
                         <div class="form-group"><label class="form-label">Password:</label><input type="password" name="reg_password" class="form-control" required placeholder="******"></div>
                         <div class="form-group"><label class="form-label">Gosa User (Role):</label><select name="reg_gosa_user" class="form-select"><option value="barsiisaa">Barsiisaa</option><option value="admin">Admin</option><option value="barataa">Barataa</option></select></div>
                     </div>

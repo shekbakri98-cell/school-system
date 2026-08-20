@@ -1,3 +1,67 @@
+<?php
+// 1. Walitti hidhamiinsa uumuu (Odeeffannoo kee isa sirrii)
+$servername = "mysql-anewar.alwaysdata.net"; 
+$username = "anewar_admin"; 
+$password = "015661Emran@";      
+$dbname = "anewar_school_db"; 
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Kuusaa odeeffannoo waliin walitti hidhuun hin danda'amne: " . $conn->connect_error);
+}
+
+// Ergaawwan agarsiisaniif (Notification messages)
+$msg = "";
+$msg_type = "";
+
+// 2. Barataa Galmeessuu (Process Student Form Submission)
+if (isset($_POST['submit_student'])) {
+    $daree = $conn->real_escape_string($_POST['daree']);
+    $kutaa = $conn->real_escape_string($_POST['kutaa']);
+    $roll_no = $conn->real_escape_string($_POST['roll_no']);
+    $maqaa_guutuu = $conn->real_escape_string($_POST['maqaa_guutuu']);
+    $saala = $conn->real_escape_string($_POST['saala']);
+    $amantii = $conn->real_escape_string($_POST['amantii']);
+    $bilbila_abbaa = $conn->real_escape_string($_POST['bilbila_abbaa']);
+    $bilbila_haadha = $conn->real_escape_string($_POST['bilbila_haadha']);
+
+    $sql = "INSERT INTO students (daree, kutaa, roll_no, maqaa_guutuu, saala, amantii, bilbila_abbaa, bilbila_haadha) 
+            VALUES ('$daree', '$kutaa', '$roll_no', '$maqaa_guutuu', '$saala', '$amantii', '$bilbila_abbaa', '$bilbila_haadha')";
+    
+    if ($conn->query($sql) === TRUE) {
+        $msg = "Milkaa'ina! Barataan haala sirriin galmeeffameera.";
+        $msg_type = "success";
+    } else {
+        $msg = "Dogoggorri uumame: " . $conn->error;
+        $msg_type = "danger";
+    }
+}
+
+// 3. Barsiisaa Galmeessuu (Process Teacher Form Submission)
+if (isset($_POST['submit_teacher'])) {
+    $maqaa_barsiisaa = $conn->real_escape_string($_POST['maqaa_barsiisaa']);
+    $saala = $conn->real_escape_string($_POST['saala']);
+    $gosa_barnootaa = $conn->real_escape_string($_POST['gosa_barnootaa']);
+    $bilbila = $conn->real_escape_string($_POST['bilbila']);
+    $id_nambarii = $conn->real_escape_string($_POST['id_nambarii']);
+    $teessoo = $conn->real_escape_string($_POST['teessoo']);
+
+    $sql = "INSERT INTO teachers (maqaa_barsiisaa, saala, gosa_barnootaa, bilbila, id_nambarii, teessoo) 
+            VALUES ('$maqaa_barsiisaa', '$saala', '$gosa_barnootaa', '$bilbila', '$id_nambarii', '$teessoo')";
+    
+    if ($conn->query($sql) === TRUE) {
+        $msg = "Milkaa'ina! Barsiisaan haala sirriin galmeeffameera.";
+        $msg_type = "success";
+    } else {
+        $msg = "Dogoggorri uumame: " . $conn->error;
+        $msg_type = "danger";
+    }
+}
+
+// Fuula kamiin akka banamu to'achuuf (Navigation Tab)
+$page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
+?>
 <!DOCTYPE html>
 <html lang="om">
 <head>

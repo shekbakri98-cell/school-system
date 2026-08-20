@@ -1,8 +1,7 @@
 <?php
 session_start();
-include('db_connect.php'); // Sarvarii Alwaysdata waliin walitti hidhuuf
+include('db_connect.php'); 
 
-// Fuula weebsaayitiikee kam akka dhufe adda baasuuf
 $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
 ?>
 <!DOCTYPE html>
@@ -11,9 +10,7 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICTVision School System</title>
-    <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://jsdelivr.net">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>
         body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 0.9rem; }
@@ -35,7 +32,6 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
 </head>
 <body>
 
-<!-- HEADER BAR -->
 <div class="navbar-custom d-flex justify-content-between align-items-center">
     <div>ICTVision School System</div>
     <div class="navbar-right-btns d-flex">
@@ -48,7 +44,6 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
 <div class="container-fluid mt-3">
     <div class="row">
         
-        <!-- BITA IRRATTI: SIDEBAR MENU -->
         <div class="col-md-2 mb-3">
             <div class="sidebar">
                 <div class="sidebar-header">Main</div>
@@ -58,14 +53,12 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                     <a href="?view=sections" class="list-group-item <?php echo $page=='sections'?'active-menu':''; ?>"><i class="fas fa-folder"></i> Section</a>
                     <a href="?view=subjects" class="list-group-item <?php echo $page=='subjects'?'active-menu':''; ?>"><i class="fas fa-book"></i> Subject</a>
                     
-                    <!-- STUDENT SUB-MENUS -->
                     <a href="?view=student_list" class="list-group-item <?php echo $page=='student_list'?'active-menu':''; ?>"><i class="fas fa-user"></i> Student</a>
                     <?php if($page=='student_list') { ?>
                         <a href="#" class="list-group-item sub-menu"><i class="fas fa-plus"></i> Add New</a>
                         <a href="?view=student_list" class="list-group-item sub-menu text-primary font-weight-bold"><i class="fas fa-list"></i> Student List</a>
                     <?php } ?>
 
-                    <!-- TEACHER SUB-MENUS -->
                     <a href="?view=teacher_list" class="list-group-item <?php echo $page=='teacher_list' || $page=='timetable'?'active-menu':''; ?>"><i class="fas fa-chalkboard-teacher"></i> Teacher</a>
                     <?php if($page=='teacher_list' || $page=='timetable') { ?>
                         <a href="?view=teacher_list" class="list-group-item sub-menu <?php echo $page=='teacher_list'?'text-primary font-weight-bold':''; ?>"><i class="fas fa-list"></i> Teacher List</a>
@@ -79,7 +72,6 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                     <a href="?view=promotion" class="list-group-item <?php echo $page=='promotion'?'active-menu':''; ?>"><i class="fas fa-arrow-up"></i> Promotion</a>
                     <a href="?view=voice_sms" class="list-group-item <?php echo $page=='voice_sms'?'active-menu':''; ?>"><i class="fas fa-envelope"></i> Voice / SMS</a>
                     
-                    <!-- SETTINGS SUB-MENUS -->
                     <a href="?view=holidays" class="list-group-item <?php echo $page=='holidays' || $page=='offdays'?'active-menu':''; ?>"><i class="fas fa-cog"></i> Settings</a>
                     <?php if($page=='holidays' || $page=='offdays') { ?>
                         <a href="?view=holidays" class="list-group-item sub-menu <?php echo $page=='holidays'?'text-primary font-weight-bold':''; ?>"><i class="fas fa-umbrella-beach"></i> Holidays</a>
@@ -89,10 +81,8 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
             </div>
         </div>
 
-        <!-- MIRGA IRRATTI: DYNAMIC MAIN CONTENT -->
         <div class="col-md-10">
             
-            <!-- 1. DASHBOARD -->
             <?php if($page == 'dashboard') { ?>
                 <div class="card card-custom">
                     <div class="card-header card-header-custom"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
@@ -103,7 +93,6 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                 </div>
             <?php } ?>
 
-            <!-- 2. CLASS LIST -->
             <?php if($page == 'class_list') { ?>
                 <div class="card card-custom">
                     <div class="card-header card-header-custom"><i class="fas fa-home"></i> Class List</div>
@@ -118,7 +107,7 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                                         echo "<tr><td>" . htmlspecialchars($c_row['class_code'] ?? $c_row['id']) . "</td></tr>";
                                     }
                                 } else {
-                                    echo "<tr><td>cl1</td></tr><tr><td>cl10</td></tr><tr><td>cl2</td></tr><tr><td>cl3</td></tr>";
+                                    echo "<tr><td>cl1</td></tr><tr><td>cl10</td></tr><tr><td>cl2</td></tr>";
                                 }
                                 ?>
                             </tbody>
@@ -127,7 +116,6 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                 </div>
             <?php } ?>
 
-            <!-- 3. STUDENT LIST -->
             <?php if($page == 'student_list') { ?>
                 <div class="card card-custom">
                     <div class="card-header card-header-custom"><i class="fas fa-user"></i> Student List</div>
@@ -141,3 +129,9 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                                     while($row = $res->fetch_assoc()) { ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($row['roll_no']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['class_name'] ?? 'Class-1'); ?></td>
+                                            <td><?php echo htmlspecialchars($row['full_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['gender']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['religion']); ?></td>
+                                            <td>
+                                                <button class="btn btn-success action-btn"><i class="fas fa-eye"></i></button>

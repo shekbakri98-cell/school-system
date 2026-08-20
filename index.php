@@ -112,6 +112,19 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
         .btn-submit { background-color: #1d8ecd; color: white; border: none; padding: 12px 30px; border-radius: 4px; font-size: 15px; font-weight: bold; cursor: pointer; display: inline-block; float: right; margin-top: 20px; transition: background 0.2s; }
         .btn-submit:hover { background-color: #157cb5; }
         
+        /* Alerts */
+        .alert { padding: 15px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* Table Styles for List */
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        .data-table th, .data-table td { padding: 12px 15px; border-bottom: 1px solid #eef2f5; }
+        .data-table th { background-color: #f8f9fa; color: #555; font-weight: bold; }
+        .data-table tr:hover { background-color: #f1f8fc; }
+        .no-data { text-align: center; color: #999; padding: 20px; }
+
         .clear { clear: both; }
         .footer-text { font-size: 12px; color: #777; margin-top: 40px; text-align: center; }
 
@@ -136,106 +149,39 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'student_form';
     <!-- Caasaa Gidduu / Main Section -->
     <div class="main-container">
         
-       <!-- Koodii naannoo sarara 113-128 jiru kanaan bakka buusi -->
-<div class="sidebar">
-    <div class="menu-header">MAIN</div>
-    <a class="nav-link" href="?page=dashboard">Dashboard</a>
-    <a class="nav-link" href="?page=class">Class</a>
-    <a class="nav-link" href="?page=section">Section</a>
-    <a class="nav-link" href="?page=subject">Subject</a>
-    <a class="nav-link <?php echo ($page == 'student_form') ? 'active' : ''; ?>" href="?page=student_form">Student Form</a>
-    <a class="nav-link <?php echo ($page == 'student_list') ? 'active' : ''; ?>" href="?page=student_list">Student List</a>
-    <a class="nav-link <?php echo ($page == 'teacher_form') ? 'active' : ''; ?>" href="?page=teacher_form">Teacher Form</a>
-    <a class="nav-link" href="?page=attendance">Attendance</a>
-    <a class="nav-link" href="?page=exams">Exams</a>
-    <a class="nav-link" href="?page=mark_manage">Mark Manage</a>
-    <a class="nav-link" href="?page=result">Result</a>
-    <a class="nav-link" href="?page=promotion">Promotion</a>
-    <a class="nav-link" href="?page=voice_sms">Voice / SMS</a>
-    <a class="nav-link" href="?page=settings">Settings</a>
-</div>
-        <!-- Unka Galmeessaa / Form Section -->
-        <div class="content-body">
-            <h3>Unka Galmeessa Barataa</h3>
-
-            <form action="" method="POST">
-                
-                <!-- 1. Odeeffannoo Daree -->
-                <div class="form-section-title">Odeeffannoo Daree</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Daree:</label>
-                        <select name="daree" class="form-select" required>
-                            <option value="Class - 1">Class - 1</option>
-                            <option value="Class - 2">Class - 2</option>
-                            <option value="Class - 3">Class - 3</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Kutaa:</label>
-                        <select name="kutaa" class="form-select" required>
-                            <option value="Blue (25)">Blue (25)</option>
-                            <option value="Red (20)">Red (20)</option>
-                            <option value="Green (30)">Green (30)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- 2. Odeeffannoo Barataa -->
-                <div class="form-section-title">Odeeffannoo Barataa</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Roll No:</label>
-                        <input type="text" name="roll_no" class="form-control" placeholder="Lakk. Roll Nambarii galchi" required/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Maqaa Guutuu:</label>
-                        <input type="text" name="maqaa_guutuu" class="form-control" placeholder="Maqaa Guutuu Barataa" required/>
-                    </div>
-                </div>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Saala:</label>
-                        <div class="radio-group">
-                            <div class="radio-item">
-                                <input type="radio" name="saala" id="dhiira" value="Dhiira" checked/>
-                                <label for="dhiira">Dhiira</label>
-                            </div>
-                            <div class="radio-item">
-                                <input type="radio" name="saala" id="dubara" value="Dubara"/>
-                                <label for="dubara">Dubara</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Amantii:</label>
-                        <input type="text" name="amantii" class="form-control" placeholder="Amantii galchi"/>
-                    </div>
-                </div>
-
-                <!-- 3. Teessoo -->
-                <div class="form-section-title">Teessoo</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Bilbila Abbaa:</label>
-                        <input type="tel" name="bilbila_abbaa" class="form-control" placeholder="09xxxxxxxx" required/>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Bilbila Haadha:</label>
-                        <input type="tel" name="bilbila_haadha" class="form-control" placeholder="09xxxxxxxx"/>
-                    </div>
-                </div>
-
-                <!-- Buttonii Erguu (Submit) -->
-                <button type="submit" class="btn-submit">Galmeessi</button>
-                <div class="clear"></div>
-            </form>
-            
-            <p class="footer-text">ICTVision School System ©2017 - 2026</p>
+        <!-- Tarree Harka Bitaa / Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="menu-header">MAIN</div>
+            <a class="nav-link" href="?page=dashboard">Dashboard</a>
+            <a class="nav-link" href="?page=class">Class</a>
+            <a class="nav-link" href="?page=section">Section</a>
+            <a class="nav-link" href="?page=subject">Subject</a>
+            <a class="nav-link <?php echo ($page == 'student_form') ? 'active' : ''; ?>" href="?page=student_form">Student Form</a>
+            <a class="nav-link <?php echo ($page == 'student_list') ? 'active' : ''; ?>" href="?page=student_list">Student List</a>
+            <a class="nav-link <?php echo ($page == 'teacher_form') ? 'active' : ''; ?>" href="?page=teacher_form">Teacher Form</a>
+            <a class="nav-link" href="?page=attendance">Attendance</a>
+            <a class="nav-link" href="?page=exams">Exams</a>
+            <a class="nav-link" href="?page=mark_manage">Mark Manage</a>
+            <a class="nav-link" href="?page=result">Result</a>
+            <a class="nav-link" href="?page=promotion">Promotion</a>
+            <a class="nav-link" href="?page=voice_sms">Voice / SMS</a>
+            <a class="nav-link" href="?page=settings">Settings</a>
         </div>
 
-    </div>
+        <!-- Content Area -->
+        <div class="content-body">
+            
+            <!-- Agarsiiftuu Ergaa (Notifications) -->
+            <?php if (!empty($msg)): ?>
+                <div class="alert alert-<?php echo $msg_type; ?>"><?php echo $msg; ?></div>
+            <?php endif; ?>
 
-</body>
-</html>
+            <!-- FUULA 1FFAA: STUDENT FORM -->
+            <?php if ($page == 'student_form'): ?>
+                <h3>Unka Galmeessa Barataa</h3>
+                <form action="?page=student_form" method="POST">
+                    <div class="form-section-title">Odeeffannoo Daree</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Daree:</label>
+                            <select name="daree" class="form-select" required>

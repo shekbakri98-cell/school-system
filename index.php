@@ -1,159 +1,159 @@
-<?php
-session_start();
-if (!isset($_SESSION['admin_logged_in'])) {
-    header("Location: login.php");
-    exit();
-}
-include 'db_connect.php'; 
-
-// Daataa database keessaa fiduu
-$students = $conn->query("SELECT * FROM students ORDER BY id DESC");
-$teachers = $conn->query("SELECT * FROM teachers ORDER BY id DESC");
-$marks = $conn->query("SELECT * FROM student_marks ORDER BY id DESC");
-?>
 <!DOCTYPE html>
 <html lang="om">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICTVision School System - Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ICTVision School System</title>
+    <!-- Bootstrap 5 CSS linkii -->
+    <link href="https://jsdelivr.net" rel="stylesheet"/>
+    <!-- FontAwesome Icons for Sidebar -->
+    <link href="https://cloudflare.com" rel="stylesheet"/>
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar-custom { background-color: #1d8ecd; color: white; padding: 12px 20px; }
+        .sidebar { background-color: white; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); padding: 15px; }
+        .sidebar .menu-header { font-size: 11px; font-weight: bold; color: #a0a0a0; text-transform: uppercase; margin-bottom: 10px; }
+        .sidebar .nav-link { color: #555; padding: 10px 15px; border-radius: 4px; margin-bottom: 4px; font-size: 14px; font-weight: 500; display: flex; align-items: center; text-decoration: none; }
+        .sidebar .nav-link i { margin-right: 12px; width: 20px; text-align: center; color: #1d8ecd; }
+        .sidebar .nav-link:hover { background-color: #f0f7fc; color: #1d8ecd; }
+        .sidebar .nav-link.active { background-color: #1d8ecd; color: white; }
+        .sidebar .nav-link.active i { color: white; }
+        .form-container { background-color: white; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); padding: 30px; }
+        .form-section-title { color: #1d8ecd; font-size: 16px; font-weight: 600; border-bottom: 1px solid #eef2f5; padding-bottom: 8px; margin-top: 25px; margin-bottom: 15px; }
+        .form-section-title:first-of-type { margin-top: 0; }
+        .form-label { font-weight: 500; color: #444; font-size: 14px; }
+        .footer-text { font-size: 12px; color: #777; margin-top: 30px; text-align: center; }
+    </style>
 </head>
 <body>
 
-    <!-- HEADER (Gubbaa) -->
-    <header class="main-header">
-        <div class="logo">ICTVision School System</div>
-        <div class="user-profile">
-            👤 <?php echo htmlspecialchars($_SESSION['admin_username']); ?> | 
-            <a href="logout.php" style="color: #ffcccc; text-decoration: none; font-weight: bold; margin-left: 10px;">Bahi (Logout)</a>
+    <!-- Gubaarra / Navbar -->
+    <nav class="navbar navbar-custom d-flex justify-content-between align-items-center">
+        <span class="fw-bold fs-5">ICTVision School System</span>
+        <div class="fs-6">
+            <i class="fa fa-user-circle"></i> <span class="fw-bold">anewar_admin</span> | <a href="#" class="text-white text-decoration-none">Bahi (Logout)</a>
         </div>
-    </header>
+    </nav>
 
-    <div class="app-container">
-        <!-- SIDEBAR (Gulaala Bitaa) -->
-        <aside class="sidebar">
-            <div class="menu-label">MAIN</div>
-            <nav class="menu-links">
-                <a href="#" class="menu-item active" onclick="showForm('student-form-section', this)">👤 Student Form</a>
-                <a href="#" class="menu-item" onclick="showForm('student-list-section', this)">📋 Student List</a>
-                <a href="#" class="menu-item" onclick="showForm('teacher-form-section', this)">🧑‍🏫 Teacher Form</a>
-                <a href="#" class="menu-item" onclick="showForm('teacher-list-section', this)">📋 Teacher List</a>
-                <a href="#" class="menu-item" onclick="showForm('marks-form-section', this)">📌 Mark Manage</a>
-                <a href="#" class="menu-item" onclick="showForm('marks-list-section', this)">📊 Result List</a>
-            </nav>
-        </aside>
-
-        <!-- MAIN CONTENT (Kutaa Hojii) -->
-        <main class="main-content">
+    <div class="container-fluid my-4">
+        <div class="row g-4">
             
-            <!-- 1. STUDENT FORM -->
-            <div id="student-form-section" class="form-container page-section active">
-                <h2 class="form-title">Unka Galmeessa Barataa</h2>
-                <form action="process_student.php" method="POST">
-                    <div class="form-section">
-                        <h3>Odeeffannoo Daree</h3>
-                        <div class="input-row">
-                            <div class="input-group"><label>Daree:</label><select name="class" required><option value="Class - 1">Class - 1</option><option value="Class - 2">Class - 2</option></select></div>
-                            <div class="input-group"><label>Kutaa:</label><select name="section" required><option value="Blue (25)">Blue (25)</option><option value="Green">Green</option></select></div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3>Odeeffannoo Barataa</h3>
-                        <div class="input-row">
-                            <div class="input-group"><label>Roll No:</label><input type="text" name="roll_no" required></div>
-                            <div class="input-group"><label>Maqaa Guutuu:</label><input type="text" name="name" required></div>
-                        </div>
-                        <div class="input-row">
-                            <div class="input-group"><label>Saala:</label><div class="radio-group"><input type="radio" name="gender" value="Male" required>Dhiira <input type="radio" name="gender" value="Female">Dubara</div></div>
-                            <div class="input-group"><label>Amantii:</label><input type="text" name="religion"></div>
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3>Teessoo</h3>
-                        <div class="input-row">
-                            <div class="input-group"><label>Bilbila Abbaa:</label><input type="tel" name="father_contact" required></div>
-                            <div class="input-group"><label>Bilbila Haadha:</label><input type="tel" name="mother_contact"></div>
-                        </div>
-                        <div class="input-group"><label>Address:</label><textarea name="address" rows="2" required></textarea></div>
-                    </div>
-                    <button type="submit" class="submit-btn">Barataa Galmeessi</button>
-                </form>
-            </div>
-
-            <!-- 2. STUDENT LIST -->
-            <div id="student-list-section" class="form-container page-section">
-                <h2 class="form-title">Tarreeffama Barattootaa</h2>
-                <div class="table-responsive">
-                    <table class="student-table">
-                        <thead><tr><th>Roll No</th><th>Class</th><th>Section</th><th>Name</th><th>Gender</th><th>Religion</th><th>Guardian</th><th>Address</th><th>Action</th></tr></thead>
-                        <tbody>
-                            <?php while($row = $students->fetch_assoc()) { ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($row['roll_no']); ?></td>
-                                <td><?php echo htmlspecialchars($row['class_name']); ?></td>
-                                <td><?php echo htmlspecialchars($row['section_name']); ?></td>
-                                <td><?php echo htmlspecialchars($row['full_name']); ?></td>
-                                <td><?php echo htmlspecialchars($row['gender']); ?></td>
-                                <td><?php echo htmlspecialchars($row['religion']); ?></td>
-                                <td>Abbaa: <?php echo htmlspecialchars($row['father_contact']); ?><br>Haadha: <?php echo htmlspecialchars($row['mother_contact']); ?></td>
-                                <td><?php echo htmlspecialchars($row['address']); ?></td>
-                                <td><div class="action-buttons"><a href="edit_student.php?id=<?php echo $row['id']; ?>" class="btn-edit">📝</a><a href="delete_student.php?id=<?php echo $row['id']; ?>" class="btn-delete" onclick="return confirm('Haquu mirkaneessi?')">🗑️</a></div></td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+            <!-- Tarree Harka Bitaa / Sidebar Navigation -->
+            <div class="col-md-3 col-lg-2">
+                <div class="sidebar">
+                    <div class="menu-header">MAIN</div>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="#"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-school"></i> Class</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-layer-group"></i> Section</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-book"></i> Subject</a>
+                        <a class="nav-link active" href="#"><i class="fa-solid fa-user-graduate"></i> Student Form</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-list-ol"></i> Student List</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-chalkboard-teacher"></i> Teacher</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-calendar-check"></i> Attendance</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-file-pen"></i> Exams</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-list-check"></i> Mark Manage</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-poll"></i> Result</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i> Promotion</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-comment-sms"></i> Voice / SMS</a>
+                        <a class="nav-link" href="#"><i class="fa-solid fa-sliders"></i> Settings</a>
+                    </nav>
                 </div>
             </div>
 
-            <!-- 3. TEACHER FORM -->
-            <div id="teacher-form-section" class="form-container page-section">
-                <h2 class="form-title">Unka Galmeessa Barsiisotaa</h2>
-                <form action="process_teacher.php" method="POST">
-                    <div class="form-section">
-                        <div class="input-row">
-                            <div class="input-group"><label>Maqaa Guutuu:</label><input type="text" name="teacher_name" required></div>
-                            <div class="input-group"><label>Saala:</label><div class="radio-group"><input type="radio" name="gender" value="Male" required>Dhiira <input type="radio" name="gender" value="Female">Dubara</div></div>
-                        </div>
-                        <div class="input-row">
-                            <div class="input-group"><label>Amantii:</label><input type="text" name="religion"></div>
-                            <div class="input-group"><label>Bilbila (Phone):</label><input type="tel" name="phone" required></div>
-                        </div>
-                        <div class="input-row">
-                            <div class="input-group"><label>Guardian Phone:</label><input type="text" name="guardian_contact"></div>
-                            <div class="input-group"><label>Address:</label><input type="text" name="address" required></div>
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn" style="background-color:#28a745;">Barsiisaa Galmeessi</button>
-                </form>
-            </div>
+            <!-- Unka Galmeessaa / Form Section -->
+            <div class="col-md-9 col-lg-10">
+                <div class="form-container">
+                    <h3 class="fw-bold mb-4" style="color: #333;">Unka Galmeessa Barataa</h3>
+                    
+                    <!-- PHP Data Processing Node -->
+                    <?php
+                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                        // Data asirraa gara Database erguuf bakka qophaaye
+                        echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+                                <strong>Milkaa'ina!</strong> Galmeessi barataa haala sirriin raawwatameera.
+                                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                              </div>";
+                    }
+                    ?>
 
-            <!-- 4. TEACHER LIST -->
-            <div id="teacher-list-section" class="form-container page-section">
-                <h2 class="form-title">Tarreeffama Barsiisotaa</h2>
-                <div class="table-responsive">
-                    <table class="student-table">
-                        <thead><tr><th>Name</th><th>Gender</th><th>Religion</th><th>Phone</th><th>Guardian</th><th>Address</th><th>Action</th></tr></thead>
-                        <tbody>
-                            <?php while($t = $teachers->fetch_assoc()) { ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($t['full_name']); ?></td>
-                                <td><?php echo htmlspecialchars($t['gender']); ?></td>
-                                <td><?php echo htmlspecialchars($t['religion']); ?></td>
-                                <td><?php echo htmlspecialchars($t['phone']); ?></td>
-                                <td><?php echo htmlspecialchars($t['guardian_contact']); ?></td>
-                                <td><?php echo htmlspecialchars($t['address']); ?></td>
-                                <td><div class="action-buttons"><a href="edit_teacher.php?id=<?php echo $t['id']; ?>" class="btn-edit">📝</a><a href="delete_teacher.php?id=<?php echo $t['id']; ?>" class="btn-delete" onclick="return confirm('Haquu mirkaneessi?')">🗑️</a></div></td>
-                            </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                    <form action="" method="POST">
+                        
+                        <!-- 1. Odeeffannoo Daree -->
+                        <div class="form-section-title">Odeeffannoo Daree</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Daree:</label>
+                                <select name="daree" class="form-select" required>
+                                    <option value="Class - 1">Class - 1</option>
+                                    <option value="Class - 2">Class - 2</option>
+                                    <option value="Class - 3">Class - 3</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kutaa:</label>
+                                <select name="kutaa" class="form-select" required>
+                                    <option value="Blue (25)">Blue (25)</option>
+                                    <option value="Red (20)">Red (20)</option>
+                                    <option value="Green (30)">Green (30)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 2. Odeeffannoo Barataa -->
+                        <div class="form-section-title">Odeeffannoo Barataa</div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Roll No:</label>
+                                <input type="text" name="roll_no" class="form-control" placeholder="Lakk. Roll Nambarii galchi" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Maqaa Guutuu:</label>
+                                <input type="text" name="maqaa_guutuu" class="form-control" placeholder="Maqaa Guutuu Barataa" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label d-block">Saala:</label>
+                                <div class="form-check form-check-inline mt-2">
+                                    <input class="form-check-input" type="radio" name="saala" id="dhiira" value="Dhiira" checked/>
+                                    <label class="form-check-label" for="dhiira">Dhiira</label>
+                                </div>
+                                <div class="form-check form-check-inline mt-2">
+                                    <input class="form-check-input" type="radio" name="saala" id="dubara" value="Dubara"/>
+                                    <label class="form-check-label" for="dubara">Dubara</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Amantii:</label>
+                                <input type="text" name="amantii" class="form-control" placeholder="Amantii galchi"/>
+                            </div>
+                        </div>
+
+                        <!-- 3. Teessoo -->
+                        <div class="form-section-title">Teessoo</div>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">Bilbila Abbaa:</label>
+                                <input type="tel" name="bilbila_abbaa" class="form-control" placeholder="09xxxxxxxx" required/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Bilbila Haadha:</label>
+                                <input type="tel" name="bilbila_haadha" class="form-control" placeholder="09xxxxxxxx"/>
+                            </div>
+                        </div>
+
+                        <!-- Buttonii Erguu (Submit) -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary px-4 py-2" style="background-color: #1d8ecd; border-color: #1d8ecd;">
+                                <i class="fa fa-save"></i> Galmeessi
+                            </button>
+                        </div>
+                    </form>
                 </div>
+                
+                <p class="footer-text">ICTVision School System ©2017 - 2026</p>
             </div>
 
-            <!-- 5. MARK MANAGE -->
-            <div id="marks-form-section" class="form-container page-section">
-                <h2 class="form-title">Galmeessa Qabxii Barataa</h2>
-                <form action="process_marks.php" method="POST">
-                    <div class="input-row">
-function showForm(sectionId, element) {document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));document.getElementById(sectionId).classList.add('active');element.classList.add('active');}
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JavaScript Bundle Linkii -->

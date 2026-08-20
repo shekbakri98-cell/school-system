@@ -1,5 +1,9 @@
 <?php
 session_start();
+// Koodii kana yeroo tokko qofa Refresh gochuuf toora session_start() jalatti kaa'i:
+$test_user = "admin";
+$test_pass = password_hash("admin123", PASSWORD_BCRYPT);
+$conn->query("INSERT INTO users (username, password, gosa_user) VALUES ('$test_user', '$test_pass', 'admin') ON DUPLICATE KEY UPDATE password='$test_pass'");
 
 // 1. HIDHAMSA KUUSAA ODEEFFANNOO (DATABASE CONNECTION)
 $conn = new mysqli("mysql-anewar.alwaysdata.net", "anewar_admin", "015661Emran@", "anewar_school_db");

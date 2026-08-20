@@ -142,3 +142,25 @@ $page = isset($_GET['view']) ? $_GET['view'] : 'dashboard';
                                         <tr>
                                             <td><?php echo htmlspecialchars($row['roll_no']); ?></td>
                                                                        <?php echo htmlspecialchars($row['class_name'] ?? 'Class-1'); ?>
+<select class="form-control" name="teacher_id">
+    <option value="">---Select Teacher---</option>
+    <?php
+    $t_res = $conn->query("SELECT * FROM teachers");
+    if($t_res && $t_res->num_rows > 0) {
+        while($t_row = $t_res->fetch_assoc()) {
+            echo "<option value='".$t_row['id']."'>".htmlspecialchars($t_row['name'])."</option>";
+        }
+    }
+    ?>
+</select>
+           <select class="form-control" name="class_id">
+    <option value="">---Select Class---</option>
+    <?php
+    $c_res = $conn->query("SELECT * FROM classes");
+    if($c_res && $c_res->num_rows > 0) {
+        while($c_row = $c_res->fetch_assoc()) {
+            echo "<option value='".$c_row['id']."'>".htmlspecialchars($c_row['class_code'])."</option>";
+        }
+    }
+    ?>
+</select>                                                            

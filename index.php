@@ -1,15 +1,16 @@
 <?php
 session_start();
-// Koodii kanaan dura dabalte sana haqiirraatii kan qofa kaa'i:
-$test_user = "admin";
-$test_pass = password_hash("admin123", PASSWORD_BCRYPT);
-$conn->query("INSERT INTO users (username, password, gosa_user) VALUES ('$test_user', '$test_pass', 'admin') ON DUPLICATE KEY UPDATE password='$test_pass'");
 
 // 1. HIDHAMSA KUUSAA ODEEFFANNOO (DATABASE CONNECTION)
 $conn = new mysqli("mysql-anewar.alwaysdata.net", "anewar_admin", "015661Emran@", "anewar_school_db");
 if ($conn->connect_error) { 
     die("Kuusaa odeeffannoo waliin walitti hidhuun hin danda'amne: " . $conn->connect_error); 
 }
+
+// USER TEST - Koodii kun username 'admin' fi password 'admin123' uuma.
+$test_user = "admin";
+$test_pass = password_hash("admin123", PASSWORD_BCRYPT);
+$conn->query("INSERT INTO users (username, password, gosa_user) VALUES ('$test_user', '$test_pass', 'admin') ON DUPLICATE KEY UPDATE password='$test_pass'");
 
 $msg = ""; 
 $success_msg = "";

@@ -112,4 +112,48 @@ if (isset($_POST['submit_teacher'])) {
                     <thead><tr><th>ID</th><th>Maqaa Guutuu</th><th>Roll No</th><th>Daree</th><th>Kutaa</th><th>Saala</th><th>Amantii</th><th>Bilbila Abbaa</th></tr></thead>
                     <tbody>
                         <?php
-$res = $conn->query("SELECT * FROM students ORDER BY id DESC");if ($res && $res->num_rows > 0) { while($row = $res->fetch_assoc()) { echo "".$row['id']."".$row['maqaa_guutuu']."".$row['roll_no']."".$row['daree']."".$row['kutaa']."".$row['saala']."".$row['amantii']."".$row['bilbila_abbaa'].""; } }else { echo "Barataan hin jiru."; }?>Unka Galmeessa BarsiisotaaOdeeffannoo BarsiisichaaMaqaa Guutuu:ID Nambarii:Gosa Barnootaa:Bilbila:Saala: Dhiira DubaraTeessoo:Barsiisaa GalmeessiTarree BarsiisotaaIDMaqaa GuutuuID CodeGosa BarnootaaBilbilaSaalaTeessooFuula Fuulli kun qorannoo irra jira.ICTVision School System ©2017 - 2026
+                        $res = $conn->query("SELECT * FROM students ORDER BY id DESC");
+                        if ($res && $res->num_rows > 0) { while($row = $res->fetch_assoc()) { echo "<tr><td>".$row['id']."</td><td style='color:#1d8ecd;font-weight:bold;'>".$row['maqaa_guutuu']."</td><td>".$row['roll_no']."</td><td>".$row['daree']."</td><td>".$row['kutaa']."</td><td>".$row['saala']."</td><td>".$row['amantii']."</td><td>".$row['bilbila_abbaa']."</td></tr>"; } }
+                        else { echo "<tr><td colspan='8' style='text-align:center;color:#999;'>Barataan hin jiru.</td></tr>"; }
+                        ?>
+                    </tbody>
+                </table></div>
+            <?php elseif ($page == 'teacher_form'): ?>
+                <h3>Unka Galmeessa Barsiisotaa</h3>
+                <form action="?page=teacher_form" method="POST">
+                    <div class="form-section-title">Odeeffannoo Barsiisichaa</div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Maqaa Guutuu:</label><input type="text" name="maqaa_barsiisaa" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">ID Nambarii:</label><input type="text" name="id_nambarii" class="form-control" required></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Gosa Barnootaa:</label><input type="text" name="gosa_barnootaa" class="form-control" required></div>
+                        <div class="form-group"><label class="form-label">Bilbila:</label><input type="tel" name="bilbila" class="form-control" required></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label class="form-label">Saala:</label><div class="radio-group"><label><input type="radio" name="saala" value="Dhiira" checked> Dhiira</label><label><input type="radio" name="saala" value="Dubara"> Dubara</label></div></div>
+                        <div class="form-group"><label class="form-label">Teessoo:</label><input type="text" name="teessoo" class="form-control"></div>
+                    </div>
+                    <button type="submit" name="submit_teacher" class="btn-submit">Barsiisaa Galmeessi</button><div style="clear:both;"></div>
+                </form>
+            <?php elseif ($page == 'teacher_list'): ?>
+                <h3>Tarree Barsiisotaa</h3>
+                <div class="table-responsive"><table class="data-table">
+                    <thead><tr><th>ID</th><th>Maqaa Guutuu</th><th>ID Code</th><th>Gosa Barnootaa</th><th>Bilbila</th><th>Saala</th><th>Teessoo</th></tr></thead>
+                    <tbody>
+                        <?php
+                        $res = $conn->query("SELECT * FROM teachers ORDER BY id DESC");
+                        if ($res && $res->num_rows > 0) { while($row = $res->fetch_assoc()) { echo "<tr><td>".$row['id']."</td><td style='color:#fd7e14;font-weight:bold;'>".$row['maqaa_barsiisaa']."</td><td>".$row['id_nambarii']."</td><td>".$row['gosa_barnootaa']."</td><td>".$row['bilbila']."</td><td>".$row['saala']."</td><td>".$row['teessoo']."</td></tr>"; } }
+                        else { echo "<tr><td colspan='7' style='text-align:center;color:#999;'>Barsiisaan hin jiru.</td></tr>"; }
+                        ?>
+                    </tbody>
+                </table></div>
+            <?php else: ?>
+                <h3>Fuula <?php echo ucfirst($page); ?></h3><p style="color:#666; font-size:14px;">Fuulli kun qorannoo irra jira.</p>
+            <?php endif; ?>
+            <p style="font-size:11px; color:#777; margin-top:40px; text-align:center;">ICTVision School System ©2017 - 2026</p>
+        </div>
+    </div>
+</body>
+</html>
+<?php $conn->close(); ?>
